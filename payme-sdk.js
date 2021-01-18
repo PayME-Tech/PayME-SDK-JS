@@ -1,7 +1,7 @@
 class PaymeWebSdk {
   constructor(configs, settings) {
     this.configs = configs;
-    this.env = settings.env || 'production';
+    this.env = configs.dataInit.appEnv || 'production';
     this.id = settings.id
     this.dimension = {
       width: settings.width || `${window.innerWidth}px`,
@@ -14,8 +14,8 @@ class PaymeWebSdk {
     let str = '';
     if (configs !== '') str = encodeURIComponent(JSON.stringify(configs)).replace('%20','+')
     let link = ''
-    if (this.env === 'dev') link = 'http://localhost:3000'
-    else if (this.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
+    if (this.env.toLowerCase() === 'dev') link = 'http://localhost:3000'
+    else if (this.env.toLowerCase() === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
     else link = 'https://sdk.payme.com.vn'
 
     ifrm.setAttribute("src", link + "/active/" + str);
