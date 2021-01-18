@@ -3,5 +3,5 @@
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/minhdat97/WebSDKIntegration/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@latest/payme-sdk.min.js"></script>
    ```
