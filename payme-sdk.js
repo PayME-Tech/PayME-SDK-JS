@@ -15,7 +15,6 @@ class PaymeWebSdk {
     let link = ''
     if (configs.env) === 'dev') link = 'http://localhost:3000'
     else if (configs.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
-    else if (configs.env === 'sandbox2') link = 'https://sbx-sdk2.payme.com.vn'
     else link = 'https://sdk.payme.com.vn'
 
     ifrm.setAttribute("src", link + "/active/" + str);
