@@ -1,18 +1,18 @@
 class PaymeWebSdk {
   constructor(configs, settings) {
-    this.configs = configs
-    this.id = settings.id
+    this.configs = configs;
+    this.id = settings.id;
     this.dimension = {
       width: settings.width || `${window.innerWidth}px`,
       height: settings.height || `${window.innerHeight}px`
-    }
+    };
   }
 
   createIfrm(configs) {
     let ifrm = document.createElement("iframe");
     let str = '';
     if (configs !== '') str = encodeURIComponent(JSON.stringify(configs)).replace('%20', '+')
-    let link = ''
+    let link = '';
     if (configs.env) === 'dev') link = 'http://localhost:3000'
     else if (configs.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
     else link = 'https://sdk.payme.com.vn'
