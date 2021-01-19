@@ -11,7 +11,7 @@ class PaymeWebSdk {
   createIfrm(configs) {
     let ifrm = document.createElement("iframe");
     let str = '';
-    if (configs !== '') str = encodeURIComponent(JSON.stringify(configs)).replace('%20','+')
+    if (configs !== '') str = encodeURIComponent(JSON.stringify(configs)).replace('%20', '+')
     let link = ''
     if (configs.env) === 'dev') link = 'http://localhost:3000'
     else if (configs.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
@@ -43,7 +43,7 @@ class PaymeWebSdk {
       this.createIfrm(configs)
     }
   }
- 
+
   onMessage(id, onEvent) {
     window.onmessage = function (e) {
       if (e.data.type === 'turnoff') {
