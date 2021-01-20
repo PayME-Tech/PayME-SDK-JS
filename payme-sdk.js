@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 class PaymeWebSdk {
   constructor(configs, settings) {
     this.configs = configs
