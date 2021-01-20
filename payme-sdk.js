@@ -1,5 +1,3 @@
-const crypto = require('crypto');
-
 class PaymeWebSdk {
   constructor(configs, settings) {
     this.configs = configs
@@ -9,17 +7,43 @@ class PaymeWebSdk {
       height: settings.height || `${window.innerHeight}px`
     }
   }
-  
+
+  loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.onload = resolve
+      script.onerror = reject
+      script.src = src
+      document.head.append(script)
+    })
+    // let myScript = document.createElement("script");
+    // myScript.setAttribute("src", src);
+    // document.body.appendChild(myScript);
+
+    // myScript.addEventListener("load", this.scriptLoaded, false);
+  }
+
   encrypt(text) {
-    const algorithm = 'aes-128-cbc'; // key is 16 length
+    console.log('text', text)
     const secretKey = 'LkaWasflkjfqr2g3'
-    const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    // parse data into base64
-    const iv = Buffer.from(ivbyte);
-    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-    let encrypted = cipher.update(text, 'utf8', 'base64');
-    encrypted += cipher.final('base64');
-    return encrypted;
+    this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js')
+      .then(() => {
+        return CryptoJS.AES.encrypt(text, secretKey).toString()
+        // console.log('resss', res, CryptoJS.AES.encrypt(text, secretKey).toString())
+        // const crypto = require('crypto');
+
+        // const algorithm = 'aes-128-cbc'; // key is 16 length
+        // const secretKey = 'LkaWasflkjfqr2g3'
+        // const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        // // parse data into base64
+        // const iv = Buffer.from(ivbyte);
+        // const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+        // let encrypted = cipher.update(text, 'utf8', 'base64');
+        // encrypted += cipher.final('base64');
+        // return encrypted;
+      })
+      .catch(() => console.error('Something went wrong.'))
   }
 
   createIfrm(configs) {
