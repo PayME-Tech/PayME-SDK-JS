@@ -7,11 +7,23 @@ class PaymeWebSdk {
       height: settings.height || `${window.innerHeight}px`
     }
   }
+  
+  encrypt(text) {
+    const algorithm = 'aes-128-cbc'; // key is 16 length
+    const secretKey = 'LkaWasflkjfqr2g3'
+    const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    // parse data into base64
+    const iv = Buffer.from(ivbyte);
+    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+    let encrypted = cipher.update(text, 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+    return encrypted;
+  }
 
   createIfrm(configs) {
     let ifrm = document.createElement("iframe");
     let str = '';
-    if (configs !== '') str = encodeURIComponent(JSON.stringify(configs)).replace('%20', '+')
+    if (configs !== '') str = encodeURIComponent(this.encrypt(JSON.stringify(configs))).replace('%20', '+')
     let link = ''
     if (configs.env === 'dev') link = 'http://localhost:3000'
     else if (configs.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
