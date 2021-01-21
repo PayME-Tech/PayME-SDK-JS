@@ -17,39 +17,25 @@ class PaymeWebSdk {
       script.src = src
       document.head.append(script)
     })
-    // let myScript = document.createElement("script");
-    // myScript.setAttribute("src", src);
-    // document.body.appendChild(myScript);
-
-    // myScript.addEventListener("load", this.scriptLoaded, false);
   }
 
   encrypt(text) {
     console.log('text', text)
     const secretKey = 'LkaWasflkjfqr2g3'
-    this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js')
+    return this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js')
       .then(() => {
-        return CryptoJS.AES.encrypt(text, secretKey).toString()
-        // console.log('resss', res, CryptoJS.AES.encrypt(text, secretKey).toString())
-        // const crypto = require('crypto');
+        const encrypted = CryptoJS.AES.encrypt(text, secretKey).toString()
 
-        // const algorithm = 'aes-128-cbc'; // key is 16 length
-        // const secretKey = 'LkaWasflkjfqr2g3'
-        // const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        // // parse data into base64
-        // const iv = Buffer.from(ivbyte);
-        // const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-        // let encrypted = cipher.update(text, 'utf8', 'base64');
-        // encrypted += cipher.final('base64');
-        // return encrypted;
+        return encrypted
       })
       .catch(() => console.error('Something went wrong.'))
   }
 
-  createIfrm(configs) {
+  async createIfrm(configs) {
     let ifrm = document.createElement("iframe");
     let str = '';
-    if (configs !== '') str = encodeURIComponent(this.encrypt(JSON.stringify(configs))).replace('%20', '+')
+    if (configs !== '') str = encodeURIComponent(await this.encrypt(JSON.stringify(configs))).replace('%20', '+')
+
     let link = ''
     if (configs.env === 'dev') link = 'http://localhost:3000'
     else if (configs.env === 'sandbox') link = 'https://sbx-sdk.payme.com.vn'
