@@ -21,7 +21,7 @@ class PaymeWebSdk {
 
   encrypt(text) {
     console.log('text', text)
-    const secretKey = 'LkaWasflkjfqr2g3'
+    const secretKey = 'CMo359Lqx16QYi3x'
     return this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js')
       .then(() => {
         const encrypted = CryptoJS.AES.encrypt(text, secretKey).toString()
