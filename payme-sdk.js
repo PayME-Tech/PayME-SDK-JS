@@ -34,7 +34,7 @@ class PaymeWebSdk {
   async createIfrm(configs) {
     let ifrm = document.createElement("iframe");
     let str = '';
-    if (configs !== '') str = encodeURIComponent(await this.encrypt(JSON.stringify(configs))).replace('%20', '+')
+    if (configs !== '') str = encodeURIComponent(await this.encrypt(JSON.stringify(configs)))
 
     let link = ''
     if (configs.env === 'dev') link = 'http://localhost:3000'
