@@ -42,7 +42,7 @@ class PaymeWebSdk {
     else if (configs.env === 'sandbox2') link = 'https://sbx-sdk2.payme.com.vn'
     else link = 'https://sdk.payme.com.vn'
 
-    ifrm.setAttribute("src", link + "/active/" + str);
+    ifrm.setAttribute("src", link + "/activeWeb/" + str);
     ifrm.style.width = this.dimension.width;
     ifrm.style.height = this.dimension.height;
     ifrm.frameBorder = "0";
