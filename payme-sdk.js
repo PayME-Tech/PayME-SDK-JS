@@ -129,7 +129,7 @@ class PaymeWebSdk {
       ifrm.allow = "camera *"
       ifrm.allowFullscreen = true
       const element = document.getElementById(this.id);
-      element.appendChild(ifrm);
+      element && element.appendChild(ifrm);
     }
   
     hideIframe(link) {
@@ -147,41 +147,59 @@ class PaymeWebSdk {
       ifrm.frameBorder = "0";
       const element = document.getElementById(this.id);
       div.appendChild(ifrm)
-      element.appendChild(div);
-    }
-
-    triggerCloseIframe() {
-      const id = this.id
-      window.onmessage = function (e) {
-        if (e.data.type === 'onClose') {
-          document.getElementById(id).innerHTML = "";
-        }
-      };
+      element && element.appendChild(div);
     }
   
-    async openWallet() {
-      const iframe = await this.createOpenWalletURL()
-      this.openIframe(iframe)
-      this.triggerCloseIframe()
+    openWallet() {
+      return new Promise(async (resolve, reject) => {
+        const id = this.id
+        const iframe = await this.createOpenWalletURL()
+        console.log('iframe===', iframe)
+        this.openIframe(iframe)
+  
+        window.onmessage = function (e) {
+          if (e.data.type === 'onClose') {
+            resolve(e.data)
+            document.getElementById(id).innerHTML = "";
+          }
+        };
+      })
     }
   
-    async withdraw(configs) {
-      const iframe = await this.createWithdrawURL(configs)
-      this.openIframe(iframe)
-      this.triggerCloseIframe()
+    withdraw(configs) {
+      return new Promise(async (resolve, reject) => {
+        const id = this.id
+        const iframe = await this.createWithdrawURL(configs)
+        this.openIframe(iframe)
+  
+        window.onmessage = function (e) {
+          if (e.data.type === 'onClose') {
+            resolve(e.data)
+            document.getElementById(id).innerHTML = "";
+          }
+        };
+      })
     }
   
-    async deposit(configs) {
-      const iframe = await this.createDepositURL(configs)
-      this.openIframe(iframe)
-      this.triggerCloseIframe()
+    deposit(configs) {
+      return new Promise(async (resolve, reject) => {
+        const id = this.id
+        const iframe = await this.createDepositURL(configs)
+        this.openIframe(iframe)
+  
+        window.onmessage = function (e) {
+          if (e.data.type === 'onClose') {
+            resolve(e.data)
+            document.getElementById(id).innerHTML = "";
+          }
+        };
+      })
     }
   
     getBalance() {
       return new Promise(async (resolve, reject) => {
         const id = this.id
         const iframe = await this.createGetBalanceURL()
-  
         this.hideIframe(iframe)
   
         window.onmessage = function (e) {
@@ -194,15 +212,9 @@ class PaymeWebSdk {
       })
     }
   
-    onMessage(id, onEvent) {
+    onMessage(onEvent) {
       window.onmessage = function (e) {
-        if (e.data.type === 'onClose') {
-          onEvent(e.data);
-          document.getElementById(id).innerHTML = "";
-        } else {
-          onEvent(e.data);
-        }
+          onEvent(e.data);  
       };
     }
   }
-  
