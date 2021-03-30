@@ -1,4 +1,4 @@
-class PaymeWebSdk {
+export class PaymeWebSdk {
     WALLET_ACTIONS = {
       LOGIN: "LOGIN",
       GET_WALLET_INFO: "GET_WALLET_INFO",
@@ -63,7 +63,7 @@ class PaymeWebSdk {
         .catch((err) => console.error('Something went wrong.', err))
     }
   
-    async createGetWalletInfoURL() {
+    async createGetBalanceURL() {
       const configs = {
         ...this.configs,
         actions: {
@@ -149,32 +149,43 @@ class PaymeWebSdk {
       div.appendChild(ifrm)
       element.appendChild(div);
     }
+
+    triggerCloseIframe() {
+      const id = this.id
+      window.onmessage = function (e) {
+        if (e.data.type === 'onClose') {
+          document.getElementById(id).innerHTML = "";
+        }
+      };
+    }
   
     async openWallet() {
-      // custom: ifrm + element
       const iframe = await this.createOpenWalletURL()
       this.openIframe(iframe)
+      this.triggerCloseIframe()
     }
   
     async withdraw(configs) {
-      const iframe = await this.createWithdrawURL()
+      const iframe = await this.createWithdrawURL(configs)
       this.openIframe(iframe)
+      this.triggerCloseIframe()
     }
   
     async deposit(configs) {
-      const iframe = await this.createDepositURL()
+      const iframe = await this.createDepositURL(configs)
       this.openIframe(iframe)
+      this.triggerCloseIframe()
     }
   
     getBalance() {
       return new Promise(async (resolve, reject) => {
         const id = this.id
-        const iframe = await this.createGetWalletInfoURL()
+        const iframe = await this.createGetBalanceURL()
   
         this.hideIframe(iframe)
   
         window.onmessage = function (e) {
-          if (e.data.type === 'GET_BALANCE') {
+          if (e.data.type === 'GET_WALLET_INFO') {
             const balance = e.data.data
             resolve(balance)
             document.getElementById(id).innerHTML = "";
@@ -185,11 +196,11 @@ class PaymeWebSdk {
   
     onMessage(id, onEvent) {
       window.onmessage = function (e) {
-        if (e.data.type === 'turnoff') {
-          onEvent(e);
+        if (e.data.type === 'onClose') {
+          onEvent(e.data);
           document.getElementById(id).innerHTML = "";
         } else {
-          onEvent(e);
+          onEvent(e.data);
         }
       };
     }
