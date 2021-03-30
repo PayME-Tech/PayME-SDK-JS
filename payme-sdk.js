@@ -176,7 +176,7 @@ class PaymeWebSdk {
           if (e.data.type === 'GET_BALANCE') {
             const balance = e.data.data
             resolve(balance)
-            document.getElementById(id).innerHTML = "";
+            document.getElementById(this.id).innerHTML = "";
           }
         };
       })
