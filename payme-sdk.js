@@ -168,6 +168,7 @@ class PaymeWebSdk {
   
     getBalance() {
       return new Promise(async (resolve, reject) => {
+        const id = this.id
         const iframe = await this.createGetWalletInfoURL()
   
         this.hideIframe(iframe)
@@ -176,7 +177,7 @@ class PaymeWebSdk {
           if (e.data.type === 'GET_BALANCE') {
             const balance = e.data.data
             resolve(balance)
-            document.getElementById(this.id).innerHTML = "";
+            document.getElementById(id).innerHTML = "";
           }
         };
       })
