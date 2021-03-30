@@ -118,6 +118,55 @@ class PaymeWebSdk {
   
       return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
     }
+
+    async createGetAccountInfoURL() {
+        const configs = {
+          ...this.configs,
+          actions: {
+            type: this.WALLET_ACTIONS.GET_ACCOUNT_INFO,
+          },
+        }
+        const encrypt = await this.encrypt(configs)
+    
+        return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
+
+    async createGetListServiceURL() {
+        const configs = {
+          ...this.configs,
+          actions: {
+            type: this.WALLET_ACTIONS.GET_LIST_SERVICE,
+          },
+        }
+        const encrypt = await this.encrypt(configs)
+    
+        return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
+
+    async createGetListPaymentMethodURL() {
+        const configs = {
+          ...this.configs,
+          actions: {
+            type: this.WALLET_ACTIONS.GET_LIST_PAYMENT_METHOD,
+          },
+        }
+        const encrypt = await this.encrypt(configs)
+    
+        return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
+
+    async createOpenServiceURL(serviceCode) {
+        const configs = {
+          ...this.configs,
+          actions: {
+            type: this.WALLET_ACTIONS.UTILITY,
+            serviceCode,
+          },
+        }
+        const encrypt = await this.encrypt(configs)
+    
+        return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
   
     openIframe(link) {
       let ifrm = document.createElement("iframe");
@@ -204,12 +253,75 @@ class PaymeWebSdk {
   
         window.onmessage = function (e) {
           if (e.data.type === 'GET_WALLET_INFO') {
-            const balance = e.data.data
-            resolve(balance)
+            const data = e.data.data
+            resolve(data)
             document.getElementById(id).innerHTML = "";
           }
         };
       })
+    }
+
+    getListService() {
+        return new Promise(async (resolve, reject) => {
+            const id = this.id
+            const iframe = await this.createGetListServiceURL()
+            this.hideIframe(iframe)
+
+            window.onmessage = function (e) {
+            if (e.data.type === 'GET_LIST_SERVICE') {
+                const data = e.data.data
+                resolve(data)
+                document.getElementById(id).innerHTML = "";
+            }
+            };
+        })
+    }
+
+    getListPaymentMethod() {
+        return new Promise(async (resolve, reject) => {
+            const id = this.id
+            const iframe = await this.createGetListPaymentMethodURL()
+            this.hideIframe(iframe)
+
+            window.onmessage = function (e) {
+            if (e.data.type === 'GET_LIST_PAYMENT_METHOD') {
+                const data = e.data.data
+                resolve(data)
+                document.getElementById(id).innerHTML = "";
+            }
+            };
+        })
+    }
+
+    getAccountInfo() {
+        return new Promise(async (resolve, reject) => {
+            const id = this.id
+            const iframe = await this.createGetAccountInfoURL()
+            this.hideIframe(iframe)
+
+            window.onmessage = function (e) {
+            if (e.data.type === 'GET_ACCOUNT_INFO') {
+                const data = e.data.data
+                resolve(data)
+                document.getElementById(id).innerHTML = "";
+            }
+            };
+        })
+    }
+
+    openService(configs) {
+        return new Promise(async (resolve, reject) => {
+            const id = this.id
+            const iframe = await this.createOpenServiceURL(configs)
+            this.openIframe(iframe)
+        
+            window.onmessage = function (e) {
+                if (e.data.type === 'onClose') {
+                resolve(e.data)
+                document.getElementById(id).innerHTML = "";
+                }
+            };
+        })
     }
   
     onMessage(onEvent) {
