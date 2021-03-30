@@ -1,4 +1,4 @@
-export class PaymeWebSdk {
+class PaymeWebSdk {
     WALLET_ACTIONS = {
       LOGIN: "LOGIN",
       GET_WALLET_INFO: "GET_WALLET_INFO",
