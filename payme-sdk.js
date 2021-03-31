@@ -31,7 +31,7 @@ class PaymeWebSdk {
     getDomain(env) {
       switch (env) {
         case this.ENV.dev:
-          return "http://localhost:3000"
+          return "https://sbx-sdk2.payme.com.vn"
         case this.ENV.sandbox:
           return "https://sbx-sdk.payme.com.vn"
         case this.ENV.production:
@@ -62,6 +62,20 @@ class PaymeWebSdk {
         })
         .catch((err) => console.error('Something went wrong.', err))
     }
+
+    async createLoginURL() {
+      const configs = {
+        ...this.configs,
+        actions: {
+          type: this.WALLET_ACTIONS.LOGIN,
+        },
+      }
+
+      const encrypt = await this.encrypt(configs)
+  
+      return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
+  
   
     async createGetBalanceURL() {
       const configs = {
@@ -85,7 +99,7 @@ class PaymeWebSdk {
       }
       const encrypt = await this.encrypt(configs)
   
-      return this.domain + "/activeWeb/" + encodeURIComponent(encrypt)
+      return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
     }
   
     async createDepositURL(amount, description, extraData) {
@@ -112,6 +126,22 @@ class PaymeWebSdk {
           amount,
           description,
           extraData,
+        },
+      }
+      const encrypt = await this.encrypt(configs)
+  
+      return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
+    }
+
+    async createPayURL(param) {
+      const configs = {
+        ...this.configs,
+        actions: {
+          type: this.WALLET_ACTIONS.PAY,
+          amount: param.amount,
+          orderId: param.orderId,
+          storeId: param.storeId,
+          note: param.note
         },
       }
       const encrypt = await this.encrypt(configs)
@@ -198,6 +228,22 @@ class PaymeWebSdk {
       div.appendChild(ifrm)
       element && element.appendChild(div);
     }
+
+    login() {
+      return new Promise(async (resolve, reject) => {
+        const id = this.id
+        const iframe = await this.createLoginURL()
+        this.hideIframe(iframe)
+  
+        window.onmessage = function (e) {
+          if (e.data.type === 'LOGIN') {
+            const data = e.data.data
+            resolve(data)
+            document.getElementById(id).innerHTML = "";
+          }
+        };
+      })
+    }
   
     openWallet() {
       return new Promise(async (resolve, reject) => {
@@ -234,6 +280,21 @@ class PaymeWebSdk {
       return new Promise(async (resolve, reject) => {
         const id = this.id
         const iframe = await this.createDepositURL(configs)
+        this.openIframe(iframe)
+  
+        window.onmessage = function (e) {
+          if (e.data.type === 'onClose') {
+            resolve(e.data)
+            document.getElementById(id).innerHTML = "";
+          }
+        };
+      })
+    }
+
+    pay(configs) {
+      return new Promise(async (resolve, reject) => {
+        const id = this.id
+        const iframe = await this.createPayURL(configs)
         this.openIframe(iframe)
   
         window.onmessage = function (e) {
