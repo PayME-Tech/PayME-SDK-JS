@@ -56,6 +56,7 @@ class PaymeWebSdk {
       const secretKey = 'CMo359Lqx16QYi3x'
       return this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js')
         .then(() => {
+          // eslint-disable-next-line no-undef
           const encrypted = CryptoJS.AES.encrypt(JSON.stringify(text), secretKey).toString()
   
           return encrypted
@@ -102,14 +103,14 @@ class PaymeWebSdk {
       return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
     }
   
-    async createDepositURL(amount, description, extraData) {
+    async createDepositURL(param) {
       const configs = {
         ...this.configs,
         actions: {
           type: this.WALLET_ACTIONS.DEPOSIT,
-          amount,
-          description,
-          extraData,
+          amount: param.amount,
+          description: param.description,
+          extraData: param.extraData,
         },
       }
   
@@ -118,14 +119,14 @@ class PaymeWebSdk {
       return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt)
     }
   
-    async createWithdrawURL(amount, description, extraData) {
+    async createWithdrawURL(param) {
       const configs = {
         ...this.configs,
         actions: {
           type: this.WALLET_ACTIONS.WITHDRAW,
-          amount,
-          description,
-          extraData,
+          amount: param.amount,
+          description: param.description,
+          extraData: param.extraData,
         },
       }
       const encrypt = await this.encrypt(configs)
