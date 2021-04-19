@@ -128,9 +128,9 @@ class PaymeWebSdk {
   getDomain(env) {
     switch (env) {
       case this.ENV.dev:
-        return "http://localhost:3000"
+        return "https://dev-sdk.payme.com.vn"
       case this.ENV.sandbox:
-        return "http://localhost:3000"
+        return "https://sbx-sdk.payme.com.vn"
       case this.ENV.production:
         return "https://sdk.payme.com.vn"
       default:
