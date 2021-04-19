@@ -239,7 +239,9 @@ class PaymeWebSdk {
         amount: param.amount,
         orderId: param.orderId,
         storeId: param.storeId,
-        note: param.note
+        note: param.note,
+        isShowResultUI: param.isShowResultUI,
+        method: param.method
       },
     }
     const encrypt = await this.encrypt(configs)
