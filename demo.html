@@ -276,7 +276,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@3.7/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@3.8/payme-sdk.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
 
@@ -559,8 +559,7 @@
         amount: 10000,
         orderId: Date.now().toString(),
         storeId: 24088141,
-        note: "note",
-        isShowResultUI: false
+        note: "note"
       },
         (response) => {
           console.log('onSucces Pay', response)
