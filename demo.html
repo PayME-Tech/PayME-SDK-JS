@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <style>
+    .container {
+      max-width: 567px;
+      margin: auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .button {
+      margin-bottom: 8px;
+    }
+
+    .functionPage {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .buttonLogIn {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex: 1;
+      margin-top: 16px;
+    }
+
+    .groupFunction {
+      display: flex;
+      flex-direction: column;
+      margin-top: 16px;
+    }
+
+    .dropdown {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .userId {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .phoneNumber {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    /* Absolute Center Spinner */
+    .loading {
+      position: fixed;
+      z-index: 999;
+      height: 2em;
+      width: 2em;
+      overflow: show;
+      margin: auto;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      visibility: hidden;
+    }
+
+    /* Transparent Overlay */
+    .loading:before {
+      content: '';
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
+
+      background: -webkit-radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
+    }
+
+    /* :not(:required) hides these rules from IE9 and below */
+    .loading:not(:required) {
+      /* hide "loading..." text */
+      font: 0/0 a;
+      color: transparent;
+      text-shadow: none;
+      background-color: transparent;
+      border: 0;
+    }
+
+    .loading:not(:required):after {
+      content: '';
+      display: block;
+      font-size: 10px;
+      width: 1em;
+      height: 1em;
+      margin-top: -0.5em;
+      -webkit-animation: spinner 150ms infinite linear;
+      -moz-animation: spinner 150ms infinite linear;
+      -ms-animation: spinner 150ms infinite linear;
+      -o-animation: spinner 150ms infinite linear;
+      animation: spinner 150ms infinite linear;
+      border-radius: 0.5em;
+      -webkit-box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+      box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+    }
+
+    #loading.show {
+      visibility: visible;
+    }
+
+    /* Animation */
+
+    @-webkit-keyframes spinner {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @-moz-keyframes spinner {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @-o-keyframes spinner {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spinner {
+      0% {
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+      }
+
+      100% {
+        -webkit-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+  <meta charset="utf-8" />
+  <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Web site created using create-react-app" />
+  <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+  <!-- <link rel="manifest" href="%PUBLIC_URL%/manifest.json" /> -->
+  <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+  <title>React App</title>
+
+  <!-- <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script> -->
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <script type="text/javascript">
+    var testName;
+    function intialize() {
+      testName = "John";
+    }
+  </script>
+  <div class="container">
+    <div class="dropdown">
+      <p>Enviroment</p>
+      <div style="display: flex; justify-content: center;align-items: center;">
+        <select id="dropdown" onchange="onSelect(this)">
+          <option value='dev'>dev</option>
+          <option value='sandbox' selected>sandbox</option>
+        </select>
+        <!-- <img id='settings' style="width: 32px;height: 32px;margin-left: 8px;visibility: visible;"
+          onclick="onChangeSetting(this)" src="http://simpleicon.com/wp-content/uploads/setting2-64x64.png" alt="" />
+        <img id='back' style="width: 32px;height: 32px;margin-left: 8px;visibility: hidden;"
+          onclick="onChangeSetting(this)" src="https://img.icons8.com/android/24/000000/circled-left-2.png" alt="" /> -->
+      </div>
+
+    </div>
+
+    <div id="functionPage" class="functionPage">
+      <div class="userId">
+        <p>UserId</p>
+        <input placeholder="Required" id='userId' />
+      </div>
+      <div class="phoneNumber">
+        <p>Phone Number</p>
+        <input placeholder="Optional" id='phoneNumber' />
+      </div>
+      <div class="buttonLogIn">
+        <button style="display: flex;flex: 1;margin-right: 12px;text-align: center;justify-content: center;"
+          class="button" onclick="login()">Login</button>
+        <button style="display: flex;flex: 1;text-align: center;justify-content: center;" class="button"
+          onclick="logout()">Logout</button>
+      </div>
+
+      <!-- <div style="display: flex;flex-direction: row;justify-content: flex-end;">
+        <p>Balance: </p>
+        <p id="balance">0</p>
+      </div> -->
+
+      <div class="groupFunction">
+        <button class="button" onclick="getBalance()">Get Balance</button>
+        <button class="button" onclick="openWallet()">Open Wallet</button>
+        <button class="button" onclick="deposit()">Deposit</button>
+        <button class="button" onclick="withdraw()">Withdraw</button>
+        <button class="button" onclick="pay()">Pay</button>
+        <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
+        <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
+        <button class="button" onclick="getListService()">getListService</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="loading">Loading&#8230;</div>
+
+  <!-- custom id -->
+  <div id="paymeId"></div>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@3.7/payme-sdk.min.js"></script>
+  <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+    onload="getFingerPrint()"></script>
+
+  <script type="text/javascript">
+    const ERROR_CODE = {
+      EXPIRED: 401,
+      NETWORK: -1,
+      SYSTEM: -2,
+      LITMIT: -3,
+      ACCOUNT_NOT_ACTIVITIES: -4,
+      ACCOUNT_NOT_KYC: -5,
+      PAYMENT_ERROR: -6,
+      ERROR_KEY_ENCODE: -7,
+      USER_CANCELLED: -8,
+      NOT_LOGIN: -9
+    }
+
+    const CONFIGS = {
+      sandbox: {
+        appToken:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTQsImlhdCI6MTYxNDE2NDI3MH0.MmzNL81YTx8XyTu6SczAqZtnCA_ALsn9GHsJGBKJSIk",
+        publicKey: `-----BEGIN PUBLIC KEY-----
+      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAMyTFdiYBiaSIBgqFdxSgzk5LYXKocgT
+      MCx/g1gz9k2jadJ1PDohCs7N65+dh/0dTbT8CIvXrrlAgQT1zitpMPECAwEAAQ==
+      -----END PUBLIC KEY-----`,
+        privateKey: `-----BEGIN RSA PRIVATE KEY-----
+      MIIBOQIBAAJAZCKupmrF4laDA7mzlQoxSYlQApMzY7EtyAvSZhJs1NeW5dyoc0XL
+      yM+/Uxuh1bAWgcMLh3/0Tl1J7udJGTWdkQIDAQABAkAjzvM9t7kD84PudR3vEjIF
+      5gCiqxkZcWa5vuCCd9xLUEkdxyvcaLWZEqAjCmF0V3tygvg8EVgZvdD0apgngmAB
+      AiEAvTF57hIp2hkf7WJnueuZNY4zhxn7QNi3CQlGwrjOqRECIQCHfqO53A5rvxCA
+      ILzx7yXHzk6wnMcGnkNu4b5GH8usgQIhAKwv4WbZRRnoD/S+wOSnFfN2DlOBQ/jK
+      xBsHRE1oYT3hAiBSfLx8OAXnfogzGLsupqLfgy/QwYFA/DSdWn0V/+FlAQIgEUXd
+      A8pNN3/HewlpwTGfoNE8zCupzYQrYZ3ld8XPGeQ=
+      -----END RSA PRIVATE KEY-----`,
+        env: "SANDBOX",
+        secretKey: "de7bbe6566b0f1c38898b7751b057a94",
+        appId: "14",
+        storeId: 24088141
+      },
+      dev: {
+        appToken:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Njg2OH0.JyIdhQEX_Lx9CXRH4iHM8DqamLrMQJk5rhbslNW4GzY",
+        publicKey: `-----BEGIN PUBLIC KEY-----
+      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKi
+      wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==
+      -----END PUBLIC KEY-----`,
+        privateKey: `-----BEGIN RSA PRIVATE KEY-----
+      MIIBOwIBAAJBAOkNeYrZOhKTS6OcPEmbdRGDRgMHIpSpepulZJGwfg1IuRM+ZFBm
+      F6NgzicQDNXLtaO5DNjVw1o29BFoK0I6+sMCAwEAAQJAVCsGq2vaulyyI6vIZjkb
+      5bBId8164r/2xQHNuYRJchgSJahHGk46ukgBdUKX9IEM6dAQcEUgQH+45ARSSDor
+      mQIhAPt81zvT4oK1txaWEg7LRymY2YzB6PihjLPsQUo1DLf3AiEA7Tv005jvNbNC
+      pRyXcfFIy70IHzVgUiwPORXQDqJhWJUCIQDeDiZR6k4n0eGe7NV3AKCOJyt4cMOP
+      vb1qJOKlbmATkwIhALKSJfi8rpraY3kLa4fuGmCZ2qo7MFTKK29J1wGdAu99AiAQ
+      dx6DtFyY8hoo0nuEC/BXQYPUjqpqgNOx33R4ANzm9w==
+      -----END RSA PRIVATE KEY-----`,
+        env: "DEV",
+        secretKey: "zfQpwE6iHbOeAfgX",
+        appId: "6868",
+        storeId: 6868
+      },
+    }
+
+    const view = new PaymeWebSdk({
+      id: 'paymeId'
+    });
+
+    let clientId = ''
+    let env = document.getElementById("dropdown").value
+    let appID = CONFIGS[env].appId
+    let appToken = CONFIGS[env].appToken
+    let publicKey = CONFIGS[env].publicKey
+    let privateKey = CONFIGS[env].privateKey
+    let secretKey = CONFIGS[env].secretKey
+
+    function getFingerPrint() {
+      const fpPromise = FingerprintJS.load();
+
+      // Get the visitor identifier when you need it.
+      fpPromise
+        .then(fp => fp.get())
+        .then(result => {
+          // This is the visitor identifier:
+          const visitorId = result.visitorId;
+          // console.log(visitorId);
+          clientId = visitorId
+        });
+    }
+
+    function showLoading() {
+      document.getElementById("loading").classList.add("show");
+    }
+
+    function hideLoading() {
+      document.getElementById("loading").classList.remove("show");
+    }
+
+    function onSelect(obj) {
+      handleChangeEnv(obj.value)
+      env = obj.value
+    }
+
+    function onChangeSetting(value) {
+      if (document.getElementById("settings").style.visibility === 'visible') {
+        document.getElementById("functionPage").innerHTML = `<div><p>aaaa</p></div>`;
+        document.getElementById("settings").style.visibility = 'hidden'
+        document.getElementById("back").style.visibility = 'visible'
+      } else {
+        document.getElementById("functionPage").innerHTML = `<div class="userId">
+        <p>UserId</p>
+        <input placeholder="Required" id='userId' />
+      </div>
+      <div class="phoneNumber">
+        <p>Phone Number</p>
+        <input placeholder="Optional" id='phoneNumber' />
+      </div>
+      <div class="buttonLogIn">
+        <button style="display: flex;flex: 1;margin-right: 12px;text-align: center;justify-content: center;"
+          class="button" onclick="login()">Login</button>
+        <button style="display: flex;flex: 1;text-align: center;justify-content: center;" class="button"
+          onclick="logout()">Logout</button>
+      </div>
+
+      <div class="groupFunction">
+        <button class="button" onclick="getBalance()">Get Balance</button>
+        <button class="button" onclick="openWallet()">Open Wallet</button>
+        <button class="button" onclick="deposit()">Deposit</button>
+        <button class="button" onclick="withdraw()">Withdraw</button>
+        <button class="button" onclick="pay()">Pay</button>
+        <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
+        <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
+        <button class="button" onclick="getListService()">getListService</button>
+      </div>`;
+        document.getElementById("settings").style.visibility = 'visible'
+        document.getElementById("back").style.visibility = 'hidden'
+      }
+    }
+
+    function handleChangeEnv(env) {
+      appID = CONFIGS[env].appId
+      appToken = CONFIGS[env].appToken
+      publicKey = CONFIGS[env].publicKey
+      privateKey = CONFIGS[env].privateKey
+      secretKey = CONFIGS[env].secretKey
+    }
+
+    function logout() {
+      document.getElementById('userId').value = ''
+      document.getElementById('phoneNumber').value = ''
+    }
+
+    // function handleRestoreDefault() {
+    //   appID = CONFIGS[env].appId
+    //   appToken = CONFIGS[env].appToken
+    //   publicKey = CONFIGS[env].publicKey
+    //   privateKey = CONFIGS[env].privateKey
+    //   secretKey = CONFIGS[env].secretKey
+    //   // setShowLog(false)
+    // }
+
+    // function handleSave() {
+    //   // setIsSettings(false)
+    //   // isLogin = false
+    // }
+
+    function showErrorMessage(res) {
+      let message = 'Có lỗi xảy ra';
+      if (res?.message) {
+        if (res?.message?.message) {
+          message = res?.message?.message
+        } else {
+          message = res?.message
+        }
+      }
+      alert(message);
+    }
+
+    async function login() {
+      const userId = document.getElementById('userId').value
+      const phoneNumber = document.getElementById('phoneNumber').value
+
+      showLoading()
+      const res = await fetch(`https://alcohol-delivery.toptravelasia.com/createConnectToken/${userId}/${secretKey}/${phoneNumber}`)
+      if (res.status === 200) {
+        const { connectToken } = await res.json()
+        const configs = {
+          connectToken,
+          appToken,
+          clientId,
+          env,
+          partner: {
+            type: "web",
+            paddingTop: 20,
+          },
+          // showLog: showLog ? "1" : "0",
+          // configColor: ["#00ffff", "#ff0000"],
+          publicKey: publicKey,
+          privateKey: privateKey,
+          appId: appID,
+          phone: phoneNumber ?? ''
+        }
+
+        view.login(
+          configs,
+          (respone) => {
+            console.log('respone login', respone);
+            alert('Login thành công')
+            hideLoading()
+          },
+          (error) => {
+            console.log('error login', error);
+            hideLoading()
+            showErrorMessage(error)
+          }
+        )
+      } else {
+        hideLoading()
+        alert("Tạo connectToken thất bại.")
+      }
+    }
+
+    function getBalance() {
+      showLoading()
+      view.getBalance(
+        (response) => {
+          hideLoading()
+          console.log('onSucces getBalance', response)
+          alert(JSON.stringify(response?.data))
+        },
+        (error) => {
+          hideLoading()
+          console.log('error getBalance', error);
+        }
+      )
+    }
+
+    function openWallet() {
+      view.openWallet(
+        (response) => {
+          hideLoading()
+          console.log('onSucces deposit', response)
+        },
+        (error) => {
+          hideLoading()
+          console.log('error deposit', error);
+          showErrorMessage(error)
+        }
+      )
+    }
+
+    function deposit() {
+      view.deposit({ amount: 10000 },
+        (response) => {
+          console.log('onSucces deposit', response)
+        },
+        (error) => {
+          console.log('error deposit', error);
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+            showErrorMessage(error)
+          }
+        }
+      )
+    }
+
+    function withdraw() {
+      view.withdraw({ amount: 10000 },
+        (response) => {
+          console.log('onSucces withdraw', response)
+        },
+        (error) => {
+          console.log('error withdraw', error);
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+            showErrorMessage(error)
+          }
+        }
+      )
+    }
+
+    function pay() {
+      view.pay({
+        amount: 10000,
+        orderId: Date.now().toString(),
+        storeId: 24088141,
+        note: "note"
+      },
+        (response) => {
+          console.log('onSucces Pay', response)
+        },
+        (error) => {
+          console.log('error pay', error);
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+            showErrorMessage(error)
+          }
+        }
+      )
+    }
+
+    function getListService() {
+      showLoading()
+      view.getListService(
+        (response) => {
+          hideLoading()
+          console.log('onSucces getListService', response)
+          alert(JSON.stringify(response?.data))
+        },
+        (error) => {
+          hideLoading()
+          showErrorMessage(error)
+          console.log('error getListService', error);
+        })
+    }
+
+    function getAccountInformation() {
+      showLoading()
+      view.getAccountInfo(
+        (response) => {
+          hideLoading()
+          console.log('onSucces getAccountInformation', response)
+          alert(JSON.stringify(response?.data))
+        },
+        (error) => {
+          hideLoading()
+          showErrorMessage(error)
+          console.log('error getAccountInformation', error);
+        }
+      )
+    }
+
+    function getListPaymentMethod() {
+      showLoading()
+      view.getListPaymentMethod(
+        (response) => {
+          hideLoading()
+          console.log('onSucces getListPaymentMethod', response)
+          alert(JSON.stringify(response?.data))
+        },
+        (error) => {
+          hideLoading()
+          showErrorMessage(error)
+          console.log('error getListPaymentMethod', error);
+        })
+    }
+  </script>
+
+</body>
+
+</html>
