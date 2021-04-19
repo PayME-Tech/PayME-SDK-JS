@@ -44,7 +44,7 @@ class PaymeWebSdk {
       width: settings.width,
       height: settings.height
     }
-    this.domain = this.getDomain(configs.env)
+    this.domain = null
     this._iframe = null
     this.isLogin = false
 
@@ -339,6 +339,7 @@ class PaymeWebSdk {
   async login(configs, onSuccess, onError) {
     const id = this.id
     this.configs = configs
+    this.domain = this.getDomain(this.configs.env)  
     const iframe = await this.createLoginURL()
     this.hideIframe(iframe)
 
