@@ -46,6 +46,7 @@ class PaymeWebSdk {
     }
     this.domain = this.getDomain(configs.env)
     this._iframe = null
+    this.isLogin = false
 
     window.onmessage = (e) => {
       if (e.data.type === this.WALLET_ACTIONS.LOGIN) {
@@ -56,6 +57,7 @@ class PaymeWebSdk {
             ...e.data.data
           }
           this.configs = newConfigs
+          this.isLogin = true
         }
         this.sendRespone(e.data)
       }
@@ -116,12 +118,19 @@ class PaymeWebSdk {
     }
   }
 
+  _checkActiveAndKyc() {
+    if (this.configs?.accountStatus !== 'KYC_OK') {
+      return false
+    }
+    return true
+  }
+
   getDomain(env) {
     switch (env) {
       case this.ENV.dev:
-        return "https://dev-sdk.payme.com.vn"
+        return "http://localhost:3000"
       case this.ENV.sandbox:
-        return "https://sbx-sdk.payme.com.vn"
+        return "http://localhost:3000"
       case this.ENV.production:
         return "https://sdk.payme.com.vn"
       default:
@@ -292,8 +301,6 @@ class PaymeWebSdk {
     this._iframe = ifrm
 
     ifrm.setAttribute(`src`, link);
-    // ifrm.style.width = this.dimension.width;
-    // ifrm.style.height = this.dimension.height;
     ifrm.style.width = this.dimension.width ? `${this.dimension.width}px` : '100%'
     ifrm.style.height = this.dimension.height ? `${this.dimension.height}px` : '100%'
     ifrm.style.position = 'absolute'
@@ -340,6 +347,11 @@ class PaymeWebSdk {
   }
 
   async openWallet(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createOpenWalletURL()
     this.openIframe(iframe)
@@ -349,6 +361,16 @@ class PaymeWebSdk {
   }
 
   async withdraw(configs, onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createWithdrawURL(configs)
     this.openIframe(iframe)
@@ -358,6 +380,16 @@ class PaymeWebSdk {
   }
 
   async deposit(configs, onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createDepositURL(configs)
     this.openIframe(iframe)
@@ -367,6 +399,16 @@ class PaymeWebSdk {
   }
 
   async pay(configs, onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createPayURL(configs)
     this.openIframe(iframe)
@@ -376,6 +418,16 @@ class PaymeWebSdk {
   }
 
   async getBalance(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createGetBalanceURL()
     this.hideIframe(iframe)
@@ -385,6 +437,16 @@ class PaymeWebSdk {
   }
 
   async getListService(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createGetListServiceURL()
     this.hideIframe(iframe)
@@ -394,6 +456,16 @@ class PaymeWebSdk {
   }
 
   async getListPaymentMethod(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createGetListPaymentMethodURL()
     this.hideIframe(iframe)
@@ -403,6 +475,16 @@ class PaymeWebSdk {
   }
 
   async getAccountInfo(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createGetAccountInfoURL()
     this.hideIframe(iframe)
@@ -413,6 +495,16 @@ class PaymeWebSdk {
   }
 
   async openService(onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: 'NOT LOGIN' })
+      return
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      return
+    }
+
     const id = this.id
     const iframe = await this.createOpenServiceURL('HOCPHI')
     this.openIframe(iframe)
