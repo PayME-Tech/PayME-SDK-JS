@@ -14,6 +14,7 @@ class PaymeWebSdk {
 
   WALLET_ACTIONS = {
     LOGIN: 'LOGIN',
+    RELOGIN: 'RELOGIN',
     GET_WALLET_INFO: 'GET_WALLET_INFO',
     GET_ACCOUNT_INFO: 'GET_ACCOUNT_INFO',
     OPEN_WALLET: 'OPEN_WALLET',
@@ -60,6 +61,16 @@ class PaymeWebSdk {
           this.isLogin = true
         }
         this.sendRespone(e.data)
+      }
+      if (e.data.type === this.WALLET_ACTIONS.RELOGIN) {
+        if (e.data?.data) {
+          const newConfigs = {
+            ...this.configs,
+            ...e.data.data
+          }
+          this.configs = newConfigs
+          this.isLogin = true
+        }
       }
       if (e.data?.type === this.WALLET_ACTIONS.GET_WALLET_INFO) {
         this.onCloseIframe()
