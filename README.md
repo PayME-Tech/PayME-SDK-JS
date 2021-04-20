@@ -250,7 +250,12 @@ payMe.pay(
 #### getWalletInfo - Lấy các thông tin của ví
 ```javascript
 payMe.getWalletInfo(response => {
- // response.data
+ (response) => {
+ // onSuccess
+ },
+ (error) => {
+ // onError
+ }
 })
 ```
 ```json
