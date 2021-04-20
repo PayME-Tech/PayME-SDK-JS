@@ -216,12 +216,6 @@
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <script type="text/javascript">
-    var testName;
-    function intialize() {
-      testName = "John";
-    }
-  </script>
   <div class="container">
     <div class="dropdown">
       <p>Enviroment</p>
@@ -500,7 +494,7 @@
           (respone) => {
             document.getElementById("groupFunction").style.visibility = "visible"
             console.log('respone login', respone);
-            alert('Login thành công')
+            // alert('Login thành công')
             hideLoading()
           },
           (error) => {
@@ -531,6 +525,10 @@
         (error) => {
           hideLoading()
           console.log('error getBalance', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            showErrorMessage(error)
+            logout()
+          }
           if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
             showErrorMessage(error)
           }
@@ -542,11 +540,14 @@
       view.openWallet(
         (response) => {
           hideLoading()
-          console.log('onSucces deposit', response)
+          console.log('onSucces openWallet', response)
         },
         (error) => {
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           hideLoading()
-          console.log('error deposit', error);
+          console.log('error openWallet', error);
           showErrorMessage(error)
         }
       )
@@ -559,6 +560,9 @@
         },
         (error) => {
           console.log('error deposit', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
             showErrorMessage(error)
           }
@@ -573,6 +577,9 @@
         },
         (error) => {
           console.log('error withdraw', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
             showErrorMessage(error)
           }
@@ -592,6 +599,9 @@
         },
         (error) => {
           console.log('error pay', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
             showErrorMessage(error)
           }
@@ -608,6 +618,9 @@
           alert(JSON.stringify(response?.data))
         },
         (error) => {
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           hideLoading()
           showErrorMessage(error)
           console.log('error getListService', error);
@@ -623,6 +636,9 @@
           alert(JSON.stringify(response?.data))
         },
         (error) => {
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           hideLoading()
           showErrorMessage(error)
           console.log('error getAccountInformation', error);
@@ -639,6 +655,9 @@
           alert(JSON.stringify(response?.data))
         },
         (error) => {
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
           hideLoading()
           showErrorMessage(error)
           console.log('error getListPaymentMethod', error);
