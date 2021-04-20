@@ -14,7 +14,9 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 | 5 | RSA| Thuật toán mã hóa dữ liệu RSA. |
 | 6 | IPN |Instant Payment Notification , dùng để thông báo giữa hệ thống backend của app và backend của PayME|
 
-## [Demo](https://payme-tech.github.io/WebSDKIntegration/)
+## Demo
+
+Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/WebSDKIntegration/)
 
 ## Cài đặt
 Đặt thẻ `<scripts>`  sau đây gần cuối các trang của bạn, ngay trước thẻ đóng `</body>`, để kích hoạt SDK.
