@@ -247,7 +247,6 @@ payMe.pay(
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
 | onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
 
-Trong trường hợp app tích hợp cần lấy số dư để tự hiển thị lên UI trên app thì có thể dùng hàm, hàm này không hiển thị UI của PayME SDK.
 #### getWalletInfo - Lấy các thông tin của ví
 ```javascript
 payMe.getWalletInfo(response => {
