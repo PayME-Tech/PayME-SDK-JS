@@ -458,7 +458,19 @@
       alert(message);
     }
 
+    function checkUserId() {
+      if (document.getElementById('userId').value === '') {
+        alert("userID is required!")
+        return false
+      }
+      return true
+    }
+
     async function login() {
+      if (!checkUserId()) {
+        return
+      }
+
       const userId = document.getElementById('userId').value
       const phoneNumber = document.getElementById('phoneNumber').value
 
