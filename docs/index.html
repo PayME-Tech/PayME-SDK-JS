@@ -508,6 +508,9 @@
         (error) => {
           hideLoading()
           console.log('error getBalance', error);
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+            showErrorMessage(error)
+          }
         }
       )
     }
