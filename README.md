@@ -223,7 +223,7 @@ const  data = {
  storeId:  Number,
  extractData: String,
  note:  String,
- isShowResultUI: true,
+ isShowResultUI: Boolean?,
  method: Object?
 }
 payMe.pay(
@@ -242,7 +242,7 @@ payMe.pay(
 | note | No | Mô tả giao dịch từ phía đối tác. |
 | orderId | Yes | Mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch. |
 | storeId | Yes | ID của store phía công thanh toán thực hiên giao dịch thanh toán. |
-| isShowResultUI | No | Option hiển thị UI kết quả thanh toán. |
+| isShowResultUI | No | Option hiển thị UI kết quả thanh toán. Default: true |
 | method | No | (Tùy chọn có thể null) cung cấp ở hàm getPaymentMethods() để chọn trực tiếp phương thức thanh toán mà app đối tác muốn |
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
 | onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
