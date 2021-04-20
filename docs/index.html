@@ -33,6 +33,7 @@
       display: flex;
       flex-direction: column;
       margin-top: 16px;
+      visibility: hidden;
     }
 
     .dropdown {
@@ -258,7 +259,7 @@
         <p id="balance">0</p>
       </div> -->
 
-      <div class="groupFunction">
+      <div id="groupFunction" class="groupFunction">
         <button class="button" onclick="getBalance()">Get Balance</button>
         <button class="button" onclick="openWallet()">Open Wallet</button>
         <button class="button" onclick="deposit()">Deposit</button>
@@ -351,6 +352,8 @@
     let privateKey = CONFIGS[env].privateKey
     let secretKey = CONFIGS[env].secretKey
 
+    let isLogin = false
+
     function getFingerPrint() {
       const fpPromise = FingerprintJS.load();
 
@@ -420,11 +423,13 @@
       publicKey = CONFIGS[env].publicKey
       privateKey = CONFIGS[env].privateKey
       secretKey = CONFIGS[env].secretKey
+      document.getElementById("groupFunction").style.visibility = "hidden"
     }
 
     function logout() {
       document.getElementById('userId').value = ''
       document.getElementById('phoneNumber').value = ''
+      document.getElementById("groupFunction").style.visibility = "hidden"
     }
 
     // function handleRestoreDefault() {
@@ -481,14 +486,20 @@
         view.login(
           configs,
           (respone) => {
+            document.getElementById("groupFunction").style.visibility = "visible"
             console.log('respone login', respone);
             alert('Login thành công')
             hideLoading()
           },
           (error) => {
             console.log('error login', error);
+            if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_ACTIVED') {
+              document.getElementById("groupFunction").style.visibility = "visible"
+            } else {
+              showErrorMessage(error)
+              document.getElementById("groupFunction").style.visibility = "hidden"
+            }
             hideLoading()
-            showErrorMessage(error)
           }
         )
       } else {
