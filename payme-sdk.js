@@ -4,12 +4,13 @@ class PaymeWebSdk {
     NETWORK: -1,
     SYSTEM: -2,
     LITMIT: -3,
-    ACCOUNT_NOT_ACTIVITIES: -4,
-    ACCOUNT_NOT_KYC: -5,
+    NOT_ACTIVED: -4,
+    NOT_KYC: -5,
     PAYMENT_ERROR: -6,
     ERROR_KEY_ENCODE: -7,
     USER_CANCELLED: -8,
-    NOT_LOGIN: -9
+    NOT_LOGIN: -9,
+    CLOSE_IFRAME: -10
   }
 
   WALLET_ACTIONS = {
@@ -30,12 +31,6 @@ class PaymeWebSdk {
     dev: "dev",
     sandbox: "sandbox",
     production: "production",
-  }
-
-  AccountStatus = {
-    NOT_ACTIVED: 'NOT_ACTIVED',
-    NOT_KYC: 'NOT_KYC',
-    KYC_OK: 'KYC_OK'
   }
 
   constructor(settings) {
@@ -79,6 +74,9 @@ class PaymeWebSdk {
       if (e.data?.type === 'onClose') {
         document.getElementById(this.id).innerHTML = ''
         this.onCloseIframe()
+        this.sendRespone({
+          error: { code: this.ERROR_CODE.CLOSE_IFRAME, message: 'Đóng iframe' }
+        })
       }
       if (e.data?.type === 'error') {
         if (e.data?.code === 401) {
@@ -322,7 +320,7 @@ class PaymeWebSdk {
     ifrm.style.right = 0
     ifrm.style.bottom = 0
     ifrm.style.border = 0
-    ifrm.allow = 'camera *'
+    ifrm.allow = 'camera *;microphone *'
     ifrm.referrerPolicy = 'origin-when-cross-origin'
     ifrm.allowpaymentrequest = true
     ifrm.allowFullscreen = true
@@ -381,7 +379,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -400,7 +398,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -419,7 +417,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -438,7 +436,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -457,7 +455,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -476,7 +474,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -495,7 +493,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 
@@ -515,7 +513,7 @@ class PaymeWebSdk {
     }
 
     if (!this._checkActiveAndKyc()) {
-      onError({ code: this.configs.accountStatus, message: this.configs.accountStatus })
+      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
       return
     }
 

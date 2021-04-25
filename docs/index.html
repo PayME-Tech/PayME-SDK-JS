@@ -281,12 +281,13 @@
       NETWORK: -1,
       SYSTEM: -2,
       LITMIT: -3,
-      ACCOUNT_NOT_ACTIVITIES: -4,
-      ACCOUNT_NOT_KYC: -5,
+      NOT_ACTIVED: -4,
+      NOT_KYC: -5,
       PAYMENT_ERROR: -6,
       ERROR_KEY_ENCODE: -7,
       USER_CANCELLED: -8,
-      NOT_LOGIN: -9
+      NOT_LOGIN: -9,
+      // CLOSE_IFRAME: -10
     }
 
     const CONFIGS = {
@@ -499,7 +500,7 @@
           },
           (error) => {
             console.log('error login', error);
-            if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_ACTIVED') {
+            if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_ACTIVED) {
               document.getElementById("groupFunction").style.visibility = "visible"
             } else {
               showErrorMessage(error)
@@ -529,7 +530,7 @@
             showErrorMessage(error)
             logout()
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
             showErrorMessage(error)
           }
         }
@@ -563,7 +564,7 @@
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
             showErrorMessage(error)
           }
         }
@@ -580,7 +581,7 @@
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
             showErrorMessage(error)
           }
         }
@@ -602,7 +603,7 @@
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === 'NOT_KYC' || error?.code === 'NOT_ACTIVED') {
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
             showErrorMessage(error)
           }
         }
