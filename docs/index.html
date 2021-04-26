@@ -458,6 +458,10 @@
         alert("userID is required!")
         return false
       }
+      if (document.getElementById('phoneNumber').value === '') {
+        alert("Phone Number is required!")
+        return false
+      }
       return true
     }
 
