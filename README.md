@@ -96,7 +96,7 @@ payMe.login(
 | `clientId` | `string` | Là deviceId của thiết bị |
 | `env` | `string` | Là môi trường sử dụng SDK // sandbox, production |
 | `appId` | `string` | Là appID khi đăng ký merchant sdk sẽ đc hệ thống tạo cho |
-| `phone` | `string` | Số điện thoại của hệ thống tích hợp, nếu hệ thống không dùng số điện thoại thì có thể không cần truyền lên hoặc truyền null |
+| `phone` | `string` | Số điện thoại của hệ thống tích hợp |
 | `configColor` | `string[]` | configColor : là tham số màu để có thể thay đổi màu sắc giao dịch ví PayME, kiểu dữ liệu là chuỗi với định dạng #rrggbb. Nếu như truyền 2 màu thì giao diện PayME sẽ gradient theo 2 màu truyền vào. |
 
 [![img](https://github.com/PayME-Tech/PayME-SDK-Android-Example/raw/main/fe478f50-e3de-4c58-bd6d-9f77d46ce230.png?raw=true)](https://github.com/PayME-Tech/PayME-SDK-Android-Example/blob/main/fe478f50-e3de-4c58-bd6d-9f77d46ce230.png?raw=true)
