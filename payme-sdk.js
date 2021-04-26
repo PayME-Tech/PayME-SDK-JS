@@ -81,6 +81,7 @@ class PaymeWebSdk {
       if (e.data?.type === 'error') {
         if (e.data?.code === 401) {
           this.onCloseIframe()
+          this.isLogin = false
         }
         this.sendRespone(e.data)
       }
