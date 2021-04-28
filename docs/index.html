@@ -272,6 +272,7 @@
   <!-- custom id -->
   <div id="paymeId"></div>
   <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.1/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
 
@@ -361,6 +362,15 @@
           // console.log(visitorId);
           clientId = visitorId
         });
+    }
+
+    function encrypt(text, secretKey) {
+      const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+      const cipher = forge.cipher.createCipher('AES-CBC', secretKey)
+      cipher.start({ iv: ivbyte })
+      cipher.update(forge.util.createBuffer(text))
+      cipher.finish()
+      return forge.util.encode64(cipher.output.getBytes())
     }
 
     function showLoading() {
@@ -474,9 +484,8 @@
       const phoneNumber = document.getElementById('phoneNumber').value
 
       showLoading()
-      const res = await fetch(`https://alcohol-delivery.toptravelasia.com/createConnectToken/${userId}/${secretKey}/${phoneNumber}`)
-      if (res.status === 200) {
-        const { connectToken } = await res.json()
+      try {
+        const connectToken = encrypt(JSON.stringify({ userId, phone: phoneNumber, timestamp: Date.now() }), secretKey)
         const configs = {
           connectToken,
           appToken,
@@ -513,7 +522,8 @@
             hideLoading()
           }
         )
-      } else {
+      } catch (error) {
+        console.log('----', error)
         hideLoading()
         alert("Tạo connectToken thất bại.")
       }
