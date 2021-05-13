@@ -417,10 +417,10 @@ class PaymeWebSdk {
       return
     }
 
-    if (!this._checkActiveAndKyc()) {
-      onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
-      return
-    }
+    // if (!this._checkActiveAndKyc()) {
+    //   onError({ code: this.ERROR_CODE[this.configs.accountStatus], message: this.configs.accountStatus })
+    //   return
+    // }
 
     const id = this.id
     const iframe = await this.createPayURL(configs)

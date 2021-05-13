@@ -271,7 +271,8 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.1/payme-sdk.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.1/payme-sdk.min.js"></script> -->
+  <script src="../payme-sdk.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -617,7 +618,7 @@
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
+          if (error?.code === ERROR_CODE.NOT_LOGIN) {
             showErrorMessage(error)
           }
         }
