@@ -508,7 +508,6 @@
           (respone) => {
             document.getElementById("groupFunction").style.visibility = "visible"
             console.log('respone login', respone);
-            // alert('Login thành công')
             hideLoading()
           },
           (error) => {
@@ -523,7 +522,6 @@
           }
         )
       } catch (error) {
-        console.log('----', error)
         hideLoading()
         alert("Tạo connectToken thất bại.")
       }
