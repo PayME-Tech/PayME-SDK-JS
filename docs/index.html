@@ -288,7 +288,7 @@
       ERROR_KEY_ENCODE: -7,
       USER_CANCELLED: -8,
       NOT_LOGIN: -9,
-      // CLOSE_IFRAME: -10
+      CLOSE_IFRAME: -10
     }
 
     const CONFIGS = {
@@ -556,12 +556,16 @@
           console.log('onSucces openWallet', response)
         },
         (error) => {
-          if (error?.code === ERROR_CODE.EXPIRED) {
-            logout()
+          if (error?.code === ERROR_CODE.CLOSE_IFRAME) {
+            console.log('Close iFrame')
+          } else {
+            if (error?.code === ERROR_CODE.EXPIRED) {
+              logout()
+            }
+            showErrorMessage(error)
           }
           hideLoading()
           console.log('error openWallet', error);
-          showErrorMessage(error)
         }
       )
     }
