@@ -331,13 +331,12 @@ class PaymeWebSdk {
         onDisconnect();
       }
     };
-    xhr.open("GET", url, true);
+    xhr.open("GET", 'https://jsonplaceholder.typicode.com/posts', true);
     xhr.send();
   }
 
   openIframe(link) {
     this.isLogin(
-      link,
       () => {
         let ifrm = document.createElement("iframe");
         this._iframe = ifrm;
@@ -371,7 +370,7 @@ class PaymeWebSdk {
   }
 
   hideIframe(link) {
-    this.isOnline(link, () => {
+    this.isOnline(() => {
       let div = document.createElement("div");
       let ifrm = document.createElement("iframe");
       this._iframe = ifrm;
