@@ -14,18 +14,19 @@ class PaymeWebSdk {
   };
 
   WALLET_ACTIONS = {
-    LOGIN: "LOGIN",
-    RELOGIN: "RELOGIN",
-    GET_WALLET_INFO: "GET_WALLET_INFO",
-    GET_ACCOUNT_INFO: "GET_ACCOUNT_INFO",
-    OPEN_WALLET: "OPEN_WALLET",
-    WITHDRAW: "WITHDRAW",
-    DEPOSIT: "DEPOSIT",
-    GET_LIST_SERVICE: "GET_LIST_SERVICE",
-    UTILITY: "UTILITY",
-    GET_LIST_PAYMENT_METHOD: "GET_LIST_PAYMENT_METHOD",
-    PAY: "PAY",
-  };
+    LOGIN: 'LOGIN',
+    RELOGIN: 'RELOGIN',
+    GET_WALLET_INFO: 'GET_WALLET_INFO',
+    GET_ACCOUNT_INFO: 'GET_ACCOUNT_INFO',
+    OPEN_WALLET: 'OPEN_WALLET',
+    WITHDRAW: 'WITHDRAW',
+    DEPOSIT: 'DEPOSIT',
+    OPEN_SERVICE: 'OPEN_SERVICE',
+    GET_LIST_SERVICE: 'GET_LIST_SERVICE',
+    UTILITY: 'UTILITY',
+    GET_LIST_PAYMENT_METHOD: 'GET_LIST_PAYMENT_METHOD',
+    PAY: 'PAY'
+  }
 
   ENV = {
     dev: "dev",
@@ -101,6 +102,9 @@ class PaymeWebSdk {
       }
       if (e.data?.type === this.WALLET_ACTIONS.WITHDRAW) {
         this.sendRespone(e.data);
+      }
+      if (e.data?.type === this.WALLET_ACTIONS.OPEN_SERVICE) {
+        this.sendRespone(e.data)
       }
       if (e.data?.type === this.WALLET_ACTIONS.GET_LIST_PAYMENT_METHOD) {
         this.onCloseIframe();
@@ -570,7 +574,7 @@ class PaymeWebSdk {
     this._onError = onError;
   }
 
-  async openService(onSuccess, onError) {
+  async openService(serviceCode, onSuccess, onError) {
     if (!this.isLogin) {
       onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
       return;
@@ -584,9 +588,9 @@ class PaymeWebSdk {
       return;
     }
 
-    const id = this.id;
-    const iframe = await this.createOpenServiceURL("HOCPHI");
-    this.openIframe(iframe);
+    const id = this.id
+    const iframe = await this.createOpenServiceURL(serviceCode)
+    this.openIframe(iframe)
 
     this._onSuccess = onSuccess;
     this._onError = onError;

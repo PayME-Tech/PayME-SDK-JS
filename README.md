@@ -213,11 +213,28 @@ payMe.getListService(
  }
 )
 ```
+
 #### openService
-Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ mà PayME cũng cấp bằng cách truyền vào tham số serviceCode như trên
+Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ mà PayME cũng cấp bằng cách truyền vào tham số serviceCode như sau
+
 ```javascript
-payMe.openService(serviceCode: String)
+refWebPaymeSDK.current.openService(
+   serviceCode,
+   (response) => {
+      // onSuccess
+   },
+   (error) => {
+      // onError
+   }
+)
 ```
+
+| **Tham số** | **Bắt buộc** | **Giải thích** |
+| :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
+| serviceCode | Yes| Mã dịch vụ từ danh sách dịch vụ được lấy từ hàm getListService |
+| onSuccess | Yes | Dùng để bắt callback khi thực hiện thành công từ PayME SDK |
+| onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+
 #### getListPaymentMethod
 Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách các phương thức thanh toán mà PayME cung cấp vs từng tài khoản sau khi tài khoản đã kích hoạt và định danh thành công, dùng để truyền vào hàm pay() để chọn trực tiếp phương thức thanh toán mà app đối tác muốn
 ```javascript
