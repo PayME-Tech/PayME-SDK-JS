@@ -14,19 +14,19 @@ class PaymeWebSdk {
   };
 
   WALLET_ACTIONS = {
-    LOGIN: 'LOGIN',
-    RELOGIN: 'RELOGIN',
-    GET_WALLET_INFO: 'GET_WALLET_INFO',
-    GET_ACCOUNT_INFO: 'GET_ACCOUNT_INFO',
-    OPEN_WALLET: 'OPEN_WALLET',
-    WITHDRAW: 'WITHDRAW',
-    DEPOSIT: 'DEPOSIT',
-    OPEN_SERVICE: 'OPEN_SERVICE',
-    GET_LIST_SERVICE: 'GET_LIST_SERVICE',
-    UTILITY: 'UTILITY',
-    GET_LIST_PAYMENT_METHOD: 'GET_LIST_PAYMENT_METHOD',
-    PAY: 'PAY'
-  }
+    LOGIN: "LOGIN",
+    RELOGIN: "RELOGIN",
+    GET_WALLET_INFO: "GET_WALLET_INFO",
+    GET_ACCOUNT_INFO: "GET_ACCOUNT_INFO",
+    OPEN_WALLET: "OPEN_WALLET",
+    WITHDRAW: "WITHDRAW",
+    DEPOSIT: "DEPOSIT",
+    TRANSFER: "TRANSFER",
+    GET_LIST_SERVICE: "GET_LIST_SERVICE",
+    UTILITY: "UTILITY",
+    GET_LIST_PAYMENT_METHOD: "GET_LIST_PAYMENT_METHOD",
+    PAY: "PAY",
+  };
 
   ENV = {
     dev: "dev",
@@ -98,6 +98,9 @@ class PaymeWebSdk {
         this.sendRespone(e.data);
       }
       if (e.data?.type === this.WALLET_ACTIONS.DEPOSIT) {
+        this.sendRespone(e.data);
+      }
+      if (e.data?.type === this.WALLET_ACTIONS.TRANSFER) {
         this.sendRespone(e.data);
       }
       if (e.data?.type === this.WALLET_ACTIONS.WITHDRAW) {
@@ -227,8 +230,6 @@ class PaymeWebSdk {
       actions: {
         type: this.WALLET_ACTIONS.DEPOSIT,
         amount: param.amount,
-        description: param.description,
-        extraData: param.extraData,
         closeWhenDone: param?.closeWhenDone,
       },
     };
@@ -244,11 +245,25 @@ class PaymeWebSdk {
       actions: {
         type: this.WALLET_ACTIONS.WITHDRAW,
         amount: param.amount,
-        description: param.description,
-        extraData: param.extraData,
         closeWhenDone: param?.closeWhenDone,
       },
     };
+    const encrypt = await this.encrypt(configs);
+
+    return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
+  }
+
+  async createTransferURL(param) {
+    const configs = {
+      ...this.configs,
+      actions: {
+        type: this.WALLET_ACTIONS.TRANSFER,
+        amount: param.amount,
+        description: param.description,
+        closeWhenDone: param?.closeWhenDone,
+      },
+    };
+
     const encrypt = await this.encrypt(configs);
 
     return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
@@ -321,7 +336,7 @@ class PaymeWebSdk {
     return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
   }
 
-  isOnline(url, onOnline, onDisconnect) {
+  isOnline(onOnline, onDisconnect) {
     var xhr = XMLHttpRequest
       ? new XMLHttpRequest()
       : new ActiveXObject("Microsoft.XMLHttp");
@@ -340,7 +355,7 @@ class PaymeWebSdk {
   }
 
   openIframe(link) {
-    this.isLogin(
+    this.isOnline(
       () => {
         let ifrm = document.createElement("iframe");
         this._iframe = ifrm;
@@ -378,12 +393,12 @@ class PaymeWebSdk {
       let div = document.createElement("div");
       let ifrm = document.createElement("iframe");
       this._iframe = ifrm;
-  
+
       div.style.visibility = "hidden";
       div.style.display = "block";
       div.style.width = 0;
       div.style.height = 0;
-  
+
       ifrm.setAttribute(`src`, link);
       ifrm.style.width = 0;
       ifrm.style.height = 0;
@@ -461,6 +476,28 @@ class PaymeWebSdk {
 
     const id = this.id;
     const iframe = await this.createDepositURL(configs);
+    this.openIframe(iframe);
+
+    this._onSuccess = onSuccess;
+    this._onError = onError;
+  }
+
+  async transfer(configs, onSuccess, onError) {
+    if (!this.isLogin) {
+      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      return;
+    }
+
+    if (!this._checkActiveAndKyc()) {
+      onError({
+        code: this.ERROR_CODE[this.configs.accountStatus],
+        message: this.configs.accountStatus,
+      });
+      return;
+    }
+
+    const id = this.id;
+    const iframe = await this.createTransferURL(configs);
     this.openIframe(iframe);
 
     this._onSuccess = onSuccess;

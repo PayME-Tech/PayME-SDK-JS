@@ -154,8 +154,6 @@ payMe.openWallet(
 payMe.deposit(
  {
  amount: Number,
- description: String,
- extraData: String,
  closeWhenDone: Boolean
  },
  (response) => {
@@ -168,9 +166,7 @@ payMe.deposit(
 ```
 | **Tham số** | **Bắt buộc** | **Giải thích** |
 | :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
-| [amount](https://www.notion.so/amount-34eb8b97a9d04453867a7e4d87482980) | Yes| Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền |
-| [description](https://www.notion.so/description-59034b8b0afe4f90a9118da3a478e7c0) | Yes| Truyền mô tả của giao dịch nếu có |
-| [extraData](https://www.notion.so/extraData-60ec44734315404685d82f9ab1d2886a) | No | Khi thực hiện Deposit hoặc Withdraw thì app tích hợp cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend app tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết đối với hệ thống app tích hợp. |
+| amount | Yes| Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền |
 | closeWhenDone | No | true: Đóng SDK khi hoàn tất giao dịch |
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
 | onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
@@ -180,8 +176,6 @@ payMe.deposit(
 payMe.withdraw(
  {
  amount: Number,
- description: String,
- extraData: String,
  closeWhenDone: Boolean
  },
  (response) => {
@@ -195,12 +189,36 @@ payMe.withdraw(
 
 | **Tham số** | **Bắt buộc** | **Giải thích** |
 | :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
-| [amount](https://www.notion.so/amount-34eb8b97a9d04453867a7e4d87482980) | Yes| Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền |
-| [description](https://www.notion.so/description-59034b8b0afe4f90a9118da3a478e7c0) | Yes| Truyền mô tả của giao dịch nếu có |
-| [extraData](https://www.notion.so/extraData-60ec44734315404685d82f9ab1d2886a) | No | Khi thực hiện Deposit hoặc Withdraw thì app tích hợp cần truyền thêm các dữ liệu khác nếu muốn để hệ thông backend PayME có thể IBN lại hệ thống backend app tích hợp đối chiều. Ví dụ : transactionID của giao dịch hay bất kỳ dữ liệu nào cần thiết đối với hệ thống app tích hợp. |
+| amount | Yes| Dùng trong trường hợp action là Deposit/Withdraw thì truyền vào số tiền |
 | closeWhenDone | No | true: Đóng SDK khi hoàn tất giao dịch |
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
 | onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+
+#### transfer - Chuyển tiền
+```javascript
+payMe.transfer(
+ {
+ amount: Number,
+ description: String,
+ closeWhenDone: Boolean
+ },
+ (response) => {
+ // onSuccess
+ },
+ (error) => {
+ // onError
+ }
+);
+```
+
+| **Tham số** | **Bắt buộc** | **Giải thích** |
+| :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
+| amount | Yes| Dùng trong trường hợp action là Deposit/Withdraw/Transfer thì truyền vào số tiền |
+| description | No | Nội dung chuyển tiền |
+| closeWhenDone | No | true: Đóng SDK khi hoàn tất giao dịch |
+| onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
+| onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+
 #### getListService
 App có thể dùng thược tính này sau khi khởi tạo SDK để biết danh sách các dịch vụ mà PayME đang cung cấp
 ```javascript

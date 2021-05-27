@@ -258,6 +258,7 @@
         <button class="button" onclick="openWallet()">Open Wallet</button>
         <button class="button" onclick="deposit()">Deposit</button>
         <button class="button" onclick="withdraw()">Withdraw</button>
+        <button class="button" onclick="transfer()">Transfer</button>
         <button class="button" onclick="pay()">Pay</button>
         <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
         <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
@@ -600,6 +601,27 @@
         },
         (error) => {
           console.log('error withdraw', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          }
+          if (error?.code === ERROR_CODE.NOT_LOGIN || error?.code === ERROR_CODE.NOT_KYC || error?.code === ERROR_CODE.NOT_ACTIVED) {
+            showErrorMessage(error)
+          }
+        }
+      )
+    }
+
+    function transfer() {
+      view.transfer({
+        amount: 10000,
+        description: 'Chuyển tiền',
+        closeWhenDone: true
+      },
+        (response) => {
+          console.log('onSucces transfer', response)
+        },
+        (error) => {
+          console.log('error transfer', error);
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
           }
