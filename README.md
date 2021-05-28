@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.8/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.9/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -257,14 +257,23 @@ refWebPaymeSDK.current.openService(
 Hàm này được gọi khi từ app tích hợp khi muốn lấy danh sách các phương thức thanh toán mà PayME cung cấp vs từng tài khoản sau khi tài khoản đã kích hoạt và định danh thành công, dùng để truyền vào hàm pay() để chọn trực tiếp phương thức thanh toán mà app đối tác muốn
 ```javascript
 payMe.getListPaymentMethod(
- (response) => {
- // onSuccess
- },
- (error) => {
- // onError
- }
+   {
+      storeId
+   },
+   (response) => {
+   // onSuccess
+   },
+   (error) => {
+   // onError
+   }
 )
 ```
+| **Tham số** | **Bắt buộc** | **Giải thích** |
+| :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
+| storeId | Yes| ID của store phía cổng thanh toán thực hiên giao dịch thanh toán. |
+| onSuccess | Yes | Dùng để bắt callback khi thực hiện thành công từ PayME SDK |
+| onError | Yes | Dùng để bắt callback khi có lỗi xảy ra trong quá trình gọi PayME SDK |
+
 #### pay - Thanh toán
 Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví PayME đã được kích hoạt.
 ```javascript

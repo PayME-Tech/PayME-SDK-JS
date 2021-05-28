@@ -311,11 +311,12 @@ class PaymeWebSdk {
     return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
   }
 
-  async createGetListPaymentMethodURL() {
+  async createGetListPaymentMethodURL(param) {
     const configs = {
       ...this.configs,
       actions: {
         type: this.WALLET_ACTIONS.GET_LIST_PAYMENT_METHOD,
+        storeId: param.storeId
       },
     };
     const encrypt = await this.encrypt(configs);
@@ -567,7 +568,7 @@ class PaymeWebSdk {
     this._onError = onError;
   }
 
-  async getListPaymentMethod(onSuccess, onError) {
+  async getListPaymentMethod(param, onSuccess, onError) {
     if (!this.isLogin) {
       onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
       return;
@@ -582,7 +583,7 @@ class PaymeWebSdk {
     }
 
     const id = this.id;
-    const iframe = await this.createGetListPaymentMethodURL();
+    const iframe = await this.createGetListPaymentMethodURL(param);
     this.hideIframe(iframe);
 
     this._onSuccess = onSuccess;
