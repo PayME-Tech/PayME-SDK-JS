@@ -11,7 +11,33 @@ class PaymeWebSdk {
     USER_CANCELLED: -8,
     NOT_LOGIN: -9,
     CLOSE_IFRAME: -10,
+    BALANCE_ERROR: -11
   };
+
+  ACCOUNT_STATUS = {
+    NOT_ACTIVED: 'NOT_ACTIVED',
+    NOT_KYC: 'NOT_KYC',
+    KYC_OK: 'KYC_OK'
+  }
+
+  METHOD_TYPE = {
+    PAYME: 'PAYME',
+    PAYME_CREDIT: 'PAYME_CREDIT',
+    WALLET: 'WALLET',
+    BANK_ACCOUNT: 'BANK_ACCOUNT',
+    BANK_CARD: 'BANK_CARD',
+    BANK_CARD_PG: 'BANK_CARD_PG',
+    BANK_TRANSFER: 'BANK_TRANSFER',
+    ATM_CARD: 'ATM_CARD',
+    GATEWAY: 'GATEWAY',
+    CREDIT_CARD: 'CREDIT_CARD',
+    LINKED: 'LINKED',
+    BANK_QR_CODE: 'BANK_QR_CODE',
+    LINKED_BANK: 'LINKED_BANK',
+    LINKED_BANK_PVCBANK: 'LINKED_BANK_PVCBANK',
+    LINKED_BANK_OCBBANK: 'LINKED_BANK_OCBBANK',
+    LINKED_GATEWAY: 'LINKED_GATEWAY'
+  }
 
   WALLET_ACTIONS = {
     LOGIN: "LOGIN",
@@ -516,6 +542,42 @@ class PaymeWebSdk {
     //   return
     // }
 
+    switch (configs?.method?.type) {
+      case this.METHOD_TYPE.WALLET: {
+        if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
+          onError({
+            code: this.ERROR_CODE.NOT_ACTIVED,
+            message: 'Tài khoản chưa được active!'
+          })
+        } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_KYC) {
+          onError({
+            code: this.ERROR_CODE.NOT_KYC,
+            message: 'Tài khoản chưa được định danh!'
+          })
+        } else {
+          this.getBalance(
+            (res) => {
+              if (res?.data?.balance < param.amount) {
+                onError({
+                  code: this.ERROR_CODE.BALANCE_ERROR,
+                  message: 'Số dư ví PayME không đủ!'
+                })
+              }
+            },
+            (err) => {
+              onError({
+                code: this.ERROR_CODE.SYSTEM,
+                message: err?.message ?? 'Có lỗi xảy ra'
+              })
+            }
+          )
+        }
+        return
+      }
+      default:
+        break
+    }
+
     const id = this.id;
     const iframe = await this.createPayURL(configs);
     this.openIframe(iframe);
@@ -574,13 +636,13 @@ class PaymeWebSdk {
       return;
     }
 
-    if (!this._checkActiveAndKyc()) {
-      onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
-        message: this.configs.accountStatus,
-      });
-      return;
-    }
+    // if (!this._checkActiveAndKyc()) {
+    //   onError({
+    //     code: this.ERROR_CODE[this.configs.accountStatus],
+    //     message: this.configs.accountStatus,
+    //   });
+    //   return;
+    // }
 
     const id = this.id;
     const iframe = await this.createGetListPaymentMethodURL(param);

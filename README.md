@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@4.9/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.0/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -236,7 +236,7 @@ payMe.getListService(
 Hàm này được gọi khi từ app tích hợp khi muốn gọi 1 dịch vụ mà PayME cũng cấp bằng cách truyền vào tham số serviceCode như sau
 
 ```javascript
-refWebPaymeSDK.current.openService(
+payMe.openService(
    serviceCode,
    (response) => {
       // onSuccess
@@ -276,6 +276,9 @@ payMe.getListPaymentMethod(
 
 #### pay - Thanh toán
 Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví PayME đã được kích hoạt.
+- Khi thanh toán bằng ví PayME thì yêu cầu tài khoản đã kích hoạt,định danh và số dư trong ví phải lớn hơn số tiền thanh toán
+- Thông tin tài khoản lấy qua hàm <code>getAccountInfo()</code>
+- Thông tin số dư lấy qua hàm <code>getWalletInfo()</code>
 ```javascript
 const  data = {
  amount:  Number,
