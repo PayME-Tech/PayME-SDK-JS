@@ -542,40 +542,71 @@ class PaymeWebSdk {
     //   return
     // }
 
-    switch (configs?.method?.type) {
-      case this.METHOD_TYPE.WALLET: {
-        if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
-          onError({
-            code: this.ERROR_CODE.NOT_ACTIVED,
-            message: 'Tài khoản chưa được active!'
-          })
-        } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_KYC) {
-          onError({
-            code: this.ERROR_CODE.NOT_KYC,
-            message: 'Tài khoản chưa được định danh!'
-          })
-        } else {
-          this.getBalance(
-            (res) => {
-              if (res?.data?.balance < param.amount) {
-                onError({
-                  code: this.ERROR_CODE.BALANCE_ERROR,
-                  message: 'Số dư ví PayME không đủ!'
-                })
-              }
-            },
-            (err) => {
+    // switch (configs?.method?.type) {
+    //   case this.METHOD_TYPE.WALLET: {
+    //     if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
+    //       onError({
+    //         code: this.ERROR_CODE.NOT_ACTIVED,
+    //         message: 'Tài khoản chưa được active!'
+    //       })
+    //     } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_KYC) {
+    //       onError({
+    //         code: this.ERROR_CODE.NOT_KYC,
+    //         message: 'Tài khoản chưa được định danh!'
+    //       })
+    //     } else {
+    //       this.getBalance(
+    //         (res) => {
+    //           if (res?.data?.balance < param.amount) {
+    //             onError({
+    //               code: this.ERROR_CODE.BALANCE_ERROR,
+    //               message: 'Số dư ví PayME không đủ!'
+    //             })
+    //           }
+    //         },
+    //         (err) => {
+    //           onError({
+    //             code: this.ERROR_CODE.SYSTEM,
+    //             message: err?.message ?? 'Có lỗi xảy ra'
+    //           })
+    //         }
+    //       )
+    //     }
+    //     return
+    //   }
+    //   default:
+    //     break
+    // }
+
+    if (configs?.method?.type === this.METHOD_TYPE.WALLET) {
+      if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
+        onError({
+          code: this.ERROR_CODE.NOT_ACTIVED,
+          message: 'Tài khoản chưa được active!'
+        })
+      } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_KYC) {
+        onError({
+          code: this.ERROR_CODE.NOT_KYC,
+          message: 'Tài khoản chưa được định danh!'
+        })
+      } else {
+        this.getBalance(
+          (res) => {
+            if (res?.data?.balance < param.amount) {
               onError({
-                code: this.ERROR_CODE.SYSTEM,
-                message: err?.message ?? 'Có lỗi xảy ra'
+                code: this.ERROR_CODE.BALANCE_ERROR,
+                message: 'Số dư ví PayME không đủ!'
               })
             }
-          )
-        }
-        return
+          },
+          (err) => {
+            onError({
+              code: this.ERROR_CODE.SYSTEM,
+              message: err?.message ?? 'Có lỗi xảy ra'
+            })
+          }
+        )
       }
-      default:
-        break
     }
 
     const id = this.id;
