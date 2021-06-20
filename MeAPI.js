@@ -13,48 +13,29 @@ class MeAPI {
 
     merge(object, source) {
         this.loadScript(
-            "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-            () => {
-                return _.merge(object, source)
-            }
-        )
+            "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+        ).then(() => {
+            return _.merge(object, source)
+        }).catch()
     }
 
     values(object) {
         this.loadScript(
-            "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js",
-            () => {
-                return _.values(object)
-            }
-        )
+            "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
+        ).then(() => {
+            return _.values(object)
+        }).catch()
     }
 
-    loadScript(src, callback) {
-        // return new Promise((resolve, reject) => {
-        //   const script = document.createElement("script");
-        //   script.type = "text/javascript";
-        //   script.onload = resolve;
-        //   script.onerror = reject;
-        //   script.src = src;
-        //   document.head.append(script);
-        // });
-        const script = document.createElement("script")
-        script.type = "text/javascript";
-        if (script.readyState) {  // only required for IE <9
-            script.onreadystatechange = function () {
-                if (script.readyState === "loaded" || script.readyState === "complete") {
-                    script.onreadystatechange = null;
-                    callback();
-                }
-            };
-        } else {  //Others
-            script.onload = function () {
-                callback();
-            };
-        }
-
-        script.src = url;
-        document.getElementsByTagName("head")[0].appendChild(script);
+    loadScript(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.type = "text/javascript";
+            script.onload = resolve;
+            script.onerror = reject;
+            script.src = src;
+            document.head.append(script);
+        });
     }
 
     decryptKey(
@@ -63,140 +44,129 @@ class MeAPI {
         xAPIMessage,
         xAPIValidate
     ) {
-        this.loadScript("https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js",
-            () => {
-                // console.log('forge', forge)
-                let decryptKey;
-                try {
-                    const key = forge.pki.privateKeyFromPem(this.config.privateKey);
-                    const { util } = forge;
+        this.loadScript(
+            "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+        ).then(() => {
+            let decryptKey;
+            try {
+                const key = forge.pki.privateKeyFromPem(this.config.privateKey);
+                const { util } = forge;
 
-                    const encrypted = util.decode64(xAPIKey);
+                const encrypted = util.decode64(xAPIKey);
 
-                    decryptKey = key.decrypt(encrypted, 'RSA-OAEP');
+                decryptKey = key.decrypt(encrypted, 'RSA-OAEP');
 
-                } catch (error) {
-                    throw new Error('Thông tin "x-api-key" không chính xác');
-                }
-                const objValidate = {
-                    'x-api-action': xAPIAction,
-                    method,
-                    accessToken,
-                    'x-api-message': xAPIMessage,
-                };
-
-                const md = forge.md.md5.create();
-                const objValidateValue = this.values(objValidate)
-                md.update(objValidateValue.join('') + decryptKey);
-                const validate = md.digest().toHex();
-
-                // console.log('validate', validate)
-                // console.log('xAPIValidate', xAPIValidate)
-
-                if (validate !== xAPIValidate) {
-                    throw new Error('Thông tin "x-api-validate" không chính xác');
-                }
-
-                return decryptKey
+            } catch (error) {
+                throw new Error('Thông tin "x-api-key" không chính xác');
             }
-        )
+            const objValidate = {
+                'x-api-action': xAPIAction,
+                method,
+                accessToken,
+                'x-api-message': xAPIMessage,
+            };
+
+            const md = forge.md.md5.create();
+            const objValidateValue = this.values(objValidate)
+            md.update(objValidateValue.join('') + decryptKey);
+            const validate = md.digest().toHex();
+
+            // console.log('validate', validate)
+            // console.log('xAPIValidate', xAPIValidate)
+
+            if (validate !== xAPIValidate) {
+                throw new Error('Thông tin "x-api-validate" không chính xác');
+            }
+
+            return decryptKey
+        }).catch((err) => console.error("Something went wrong.", err))
     }
 
     parseDecryptKey(xAPIMessage, decryptKey) {
         this.loadScript(
             "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
-        )
-            .then(() => {
-                // eslint-disable-next-line no-undef
-                let result = null;
-                try {
-                    result = JSON.parse(
-                        CryptoJS.AES.decrypt(xAPIMessage, decryptKey).toString(
-                            CryptoJS.enc.Utf8
-                        )
-                    );
-                    if (typeof result === 'string') {
-                        result = JSON.parse(result);
-                    }
-
-                    return result
-                } catch (error) {
-                    throw new Error('Thông tin "x-api-message" không chính xác');
+        ).then(() => {
+            // eslint-disable-next-line no-undef
+            let result = null;
+            try {
+                result = JSON.parse(
+                    CryptoJS.AES.decrypt(xAPIMessage, decryptKey).toString(
+                        CryptoJS.enc.Utf8
+                    )
+                );
+                if (typeof result === 'string') {
+                    result = JSON.parse(result);
                 }
 
-                return encrypted;
-            })
+                return result
+            } catch (error) {
+                throw new Error('Thông tin "x-api-message" không chính xác');
+            }
+
+            return encrypted;
+        })
             .catch((err) => console.error("Something went wrong.", err));
     }
 
     createShortId() {
         this.loadScript(
-            "https://unpkg.com/shortid-dist@1.0.5/dist/shortid-2.2.13.js",
-            () => {
-                // console.log('shortid', shortid())
-
-                return shortid();
-            }
-        )
+            "https://unpkg.com/shortid-dist@1.0.5/dist/shortid-2.2.13.js"
+        ).then(() => {
+            return shortid();
+        }).catch()
     }
 
     AESEncrypt(url, payload, encryptKey) {
         this.loadScript(
-            "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js",
-            () => {
-                const xApiAction = CryptoJS.AES.encrypt(url, encryptKey).toString();
-                let xApiMessage = '';
-                if (payload) {
-                    xApiMessage = CryptoJS.AES.encrypt(
-                        JSON.stringify(payload),
-                        encryptKey
-                    ).toString();
-                }
-
-                return {
-                    xApiAction,
-                    xApiMessage
-                };
+            "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
+        ).then(() => {
+            const xApiAction = CryptoJS.AES.encrypt(url, encryptKey).toString();
+            let xApiMessage = '';
+            if (payload) {
+                xApiMessage = CryptoJS.AES.encrypt(
+                    JSON.stringify(payload),
+                    encryptKey
+                ).toString();
             }
-        )
+
+            return {
+                xApiAction,
+                xApiMessage
+            };
+        }).catch()
     }
 
     createXApiValidate(objValidate, encryptKey) {
         this.loadScript(
-            "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js",
-            () => {
-                // eslint-disable-next-line no-undef
-                const md = forge.md.md5.create();
-                const objValidateValue = this.values(objValidate)
-                md.update(objValidateValue.join('') + encryptKey);
-                const xAPIValidate = md.digest().toHex();
-                return xAPIValidate;
-            }
-        )
+            "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+        ).then(() => {
+            const md = forge.md.md5.create();
+            const objValidateValue = this.values(objValidate)
+            md.update(objValidateValue.join('') + encryptKey);
+            const xAPIValidate = md.digest().toHex();
+            return xAPIValidate;
+        }).catch()
     }
 
     createXApiKey(encryptKey) {
         this.loadScript(
-            "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js",
-            () => {
-                // eslint-disable-next-line no-undef
-                const key = forge.pki.publicKeyFromPem(this.config.publicKey);
-                const { util } = forge;
-                const encrypt = key.encrypt(encryptKey, 'RSA-OAEP');
-                const xAPIKey = util.encode64(encrypt);
-                return xAPIKey;
-            }
-        )
+            "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+        ).then(() => {
+            const key = forge.pki.publicKeyFromPem(this.config.publicKey);
+            const { util } = forge;
+            const encrypt = key.encrypt(encryptKey, 'RSA-OAEP');
+            const xAPIKey = util.encode64(encrypt);
+            return xAPIKey;
+        }).catch()
     }
 
     postRequest(url, body, header) {
         this.loadScript(
-            "https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js",
-            () => {
-                const request = await axios.post(url, body, header);
-                return request;
-            }
-        )
+            "https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+        ).then(() => {
+            const request = await axios.post(url, body, header);
+            return request;
+        }).catch()
     }
 
     async ResponseDecrypt(
@@ -219,13 +189,13 @@ class MeAPI {
 
         // console.log('encryptKey', encryptKey)
         const xAPIKey = await this.createXApiKey(encryptKey);
-        // console.log('xAPIKey', xAPIKey)
+        console.log('xAPIKey', xAPIKey)
         let body = '';
 
         const { xApiAction, xApiMessage } = await this.AESEncrypt(url, payload, encryptKey);
 
-        // console.log('xApiAction', xApiAction)
-        // console.log('xApiMessage', xApiMessage)
+        console.log('xApiAction', xApiAction)
+        console.log('xApiMessage', xApiMessage)
 
         const objValidate = {
             xApiAction,
@@ -234,7 +204,7 @@ class MeAPI {
             'x-api-message': xApiMessage,
         };
         const xAPIValidate = await this.createXApiValidate(objValidate, encryptKey);
-        // console.log('xAPIValidate', xAPIValidate)
+        console.log('xAPIValidate', xAPIValidate)
 
         body = {
             'x-api-message': xApiMessage,
