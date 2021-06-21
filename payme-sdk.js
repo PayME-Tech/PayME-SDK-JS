@@ -1302,7 +1302,6 @@ class PaymeWebSdk {
                   'Có lỗi từ máy chủ hệ thống',
               });
             }
-
           } else {
             if (responseAccountInit.response[0]?.extensions?.code === 401) {
               onError({
@@ -1313,7 +1312,7 @@ class PaymeWebSdk {
             } else {
               onError({
                 code: this.ERROR_CODE.SYSTEM,
-                message: 'Có lỗi từ máy chủ hệ thống',
+                message: responseAccountInit?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
               });
             }
           }
@@ -1334,7 +1333,7 @@ class PaymeWebSdk {
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: 'Có lỗi từ máy chủ hệ thống',
+            message: responseClientRegister?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       }
@@ -1472,13 +1471,18 @@ class PaymeWebSdk {
           return
         }
       } else {
-        onError({
-          code: this.ERROR_CODE.SYSTEM,
-          message:
-            responseGetMerchantInfo.response[0]?.message ??
-            responseGetMerchantInfo.response.message ??
-            'Có lỗi từ máy chủ hệ thống',
-        });
+        if (responseGetMerchantInfo.response[0]?.extensions?.code === 401) {
+          onError({
+            code: this.ERROR_CODE.EXPIRED,
+            message: responseGetMerchantInfo.response[0]?.extensions?.message ??
+              'Thông tin  xác thực không hợp lệ',
+          });
+        } else {
+          onError({
+            code: this.ERROR_CODE.SYSTEM,
+            message: responseGetMerchantInfo?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+          });
+        }
         return
       }
     }
@@ -1543,8 +1547,6 @@ class PaymeWebSdk {
       return;
     }
 
-    console.log('configsss', this.configs)
-
     try {
       const keys = {
         env: this.configs.env,
@@ -1566,7 +1568,7 @@ class PaymeWebSdk {
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: 'Có lỗi từ máy chủ hệ thống',
+            message: responseGetWalletInfo?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       }
@@ -1606,12 +1608,12 @@ class PaymeWebSdk {
         accessToken: this.configs.accessToken,
         appId: this.configs?.xApi ?? this.configs?.appId,
       };
-      const responseGsetSettingServiceMain = await this.getSettingServiceMain(
+      const responseGetSettingServiceMain = await this.getSettingServiceMain(
         params,
         keys
       );
-      if (responseGsetSettingServiceMain.status) {
-        const service = responseGsetSettingServiceMain.response?.Setting?.configs?.filter(
+      if (responseGetSettingServiceMain.status) {
+        const service = responseGetSettingServiceMain.response?.Setting?.configs?.filter(
           (itemSetting) => itemSetting?.key === 'service.main.visible'
         );
         const valueStr = service[0]?.value ?? '';
@@ -1619,17 +1621,17 @@ class PaymeWebSdk {
         onSuccess(list);
       } else {
         if (
-          responseGsetSettingServiceMain.response[0]?.extensions?.code === 401
+          responseGetSettingServiceMain.response[0]?.extensions?.code === 401
         ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseGsetSettingServiceMain.response[0]?.extensions?.message ??
+            message: responseGetSettingServiceMain.response[0]?.extensions?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: 'Có lỗi từ máy chủ hệ thống',
+            message: responseGetSettingServiceMain?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       }
@@ -1696,7 +1698,7 @@ class PaymeWebSdk {
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: 'Có lỗi từ máy chủ hệ thống',
+            message: responseGetPaymentMethod?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       }
@@ -1749,7 +1751,7 @@ class PaymeWebSdk {
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: 'Có lỗi từ máy chủ hệ thống',
+            message: responseFindAccount?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       }
