@@ -182,8 +182,6 @@ class MeAPI {
     xAPIValidate,
     accessToken
   ) {
-
-    console.log('xapi', xAPIAction, xAPIClient, xAPIKey, xAPIMessage, xAPIValidate)
     const decryptKey = await this.decryptKey(xAPIAction, xAPIKey, xAPIMessage, xAPIValidate, method, accessToken);
 
     const result = await this.parseDecryptKey(xAPIMessage, decryptKey)
@@ -259,7 +257,6 @@ class MeAPI {
         if (this.config.isSecurity === true) {
           try {
             const responseHeaders = response.headers;
-            console.log('response', response)
             const data = await this.ResponseDecrypt(
               responseHeaders['x-api-action'],
               'POST',
