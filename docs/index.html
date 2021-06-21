@@ -29,6 +29,14 @@
       margin-top: 16px;
     }
 
+    .groupFunctionNoNeedLogin {
+      padding: 0px 16px;
+      border-radius: 5px;
+      background-color: gray;
+      display: flex;
+      flex-direction: column;
+    }
+
     .groupFunction {
       display: flex;
       flex-direction: column;
@@ -252,6 +260,10 @@
         <p>Balance: </p>
         <p id="balance">0</p>
       </div> -->
+      <div class="groupFunctionNoNeedLogin">
+        <p>Chức năng không cần login</p>
+        <button class="button" onclick="pay()">Pay</button>
+      </div>
 
       <div id="groupFunction" class="groupFunction">
         <button class="button" onclick="getBalance()">Get Balance</button>
@@ -259,7 +271,6 @@
         <button class="button" onclick="deposit()">Deposit</button>
         <button class="button" onclick="withdraw()">Withdraw</button>
         <button class="button" onclick="transfer()">Transfer</button>
-        <button class="button" onclick="pay()">Pay</button>
         <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
         <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
         <button class="button" onclick="getListService()">getListService</button>
@@ -272,7 +283,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.2/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.3/payme-sdk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -316,30 +327,26 @@
       },
       dev: {
         appToken:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6Njg2OH0.JyIdhQEX_Lx9CXRH4iHM8DqamLrMQJk5rhbslNW4GzY",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6MTIsImlhdCI6MTYyMDg4MjQ2NH0.DJfi52Dc66IETflV2dQ8G_q4oUAVw_eG4TzrqkL0jLU",
         publicKey: `-----BEGIN PUBLIC KEY-----
-      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKWcehEELB4GdQ4cTLLQroLqnD3AhdKi
-      wIhTJpAi1XnbfOSrW/Ebw6h1485GOAvuG/OwB+ScsfPJBoNJeNFU6J0CAwEAAQ==
+      MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJi70XBS5+LtaCrNsrnWlVG6xec+J9M1
+      DzzvsmDfqRgTIw7RQ94SnEBBcTXhaIAZ8IW7OIWkVU0OXcybQEoLsdUCAwEAAQ==
       -----END PUBLIC KEY-----`,
         privateKey: `-----BEGIN RSA PRIVATE KEY-----
-      MIIBOwIBAAJBAOkNeYrZOhKTS6OcPEmbdRGDRgMHIpSpepulZJGwfg1IuRM+ZFBm
-      F6NgzicQDNXLtaO5DNjVw1o29BFoK0I6+sMCAwEAAQJAVCsGq2vaulyyI6vIZjkb
-      5bBId8164r/2xQHNuYRJchgSJahHGk46ukgBdUKX9IEM6dAQcEUgQH+45ARSSDor
-      mQIhAPt81zvT4oK1txaWEg7LRymY2YzB6PihjLPsQUo1DLf3AiEA7Tv005jvNbNC
-      pRyXcfFIy70IHzVgUiwPORXQDqJhWJUCIQDeDiZR6k4n0eGe7NV3AKCOJyt4cMOP
-      vb1qJOKlbmATkwIhALKSJfi8rpraY3kLa4fuGmCZ2qo7MFTKK29J1wGdAu99AiAQ
-      dx6DtFyY8hoo0nuEC/BXQYPUjqpqgNOx33R4ANzm9w==
+      MIIBOgIBAAJBAIA7GmDWkjuOQsx99tACXhOlJ4atsBN0YMPEmKhi9Ewk6bNBPvaX
+      pRMWjn7c8GfWrFUIVqlrvSlMYxmW/XaATjcCAwEAAQJAKZ6FPj8GcWwIBEUyEWtj
+      S28EODMxfe785S1u+uA7OGcerljPNOTme6iTuhooO5pB9Q5N7nB2KzoWOADwPOS+
+      uQIhAN2S5dxxadDL0wllNGeux7ltES0z2UfW9+RViByX/fAbAiEAlCd86Hy6otfd
+      k9K2YeylsdDwZfmkKq7p27ZcNqVUlBUCIQCxzEfRHdzoZDZjKqfjrzerTp7i4+Eu
+      KYzf19aSA1ENEwIgAnyXMB/H0ivlYDHNNd+O+GkVX+DMzJqa+kEZUyF7RfECICtK
+      rkcDyRzI6EtUFG+ALQOUliRRh7aiGXXZYb2KnlKy
       -----END RSA PRIVATE KEY-----`,
         env: "DEV",
-        secretKey: "zfQpwE6iHbOeAfgX",
-        appId: "6868",
-        storeId: 6868
+        secretKey: "34cfcd29432cdd5feaecb87519046e2d",
+        appId: "12",
+        storeId: 9
       },
     }
-
-    const view = new PaymeWebSdk({
-      id: 'paymeId'
-    });
 
     let clientId = ''
     let env = document.getElementById("dropdown").value
@@ -348,10 +355,23 @@
     let publicKey = CONFIGS[env].publicKey
     let privateKey = CONFIGS[env].privateKey
     let secretKey = CONFIGS[env].secretKey
-
     let isLogin = false
+    let view = null
+    let configs = {
+      appToken,
+      clientId,
+      env,
+      partner: {
+        type: "web",
+        paddingTop: 20,
+      },
+      configColor: ["#4430b3", "#6756d6"],
+      publicKey: publicKey,
+      privateKey: privateKey,
+      appId: appID
+    }
 
-    function getFingerPrint() {
+    async function getFingerPrint() {
       const fpPromise = FingerprintJS.load();
 
       // Get the visitor identifier when you need it.
@@ -362,8 +382,17 @@
           const visitorId = result.visitorId;
           // console.log(visitorId);
           clientId = visitorId
+          configs = {
+            ...configs,
+            clientId
+          }
         });
     }
+
+    view = new PaymeWebSdk({
+      id: 'paymeId',
+      configs
+    });
 
     function encrypt(text, secretKey) {
       const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -429,6 +458,19 @@
       publicKey = CONFIGS[env].publicKey
       privateKey = CONFIGS[env].privateKey
       secretKey = CONFIGS[env].secretKey
+      configs = {
+        ...configs,
+        env,
+        appId: appID,
+        publicKey,
+        privateKey,
+        appToken,
+        secretKey
+      }
+      view = new PaymeWebSdk({
+        id: 'paymeId',
+        configs
+      });
       document.getElementById("groupFunction").style.visibility = "hidden"
     }
 
@@ -480,32 +522,20 @@
       if (!checkUserId()) {
         return
       }
-
       const userId = document.getElementById('userId').value
       const phoneNumber = document.getElementById('phoneNumber').value
 
       showLoading()
       try {
         const connectToken = encrypt(JSON.stringify({ userId, phone: phoneNumber, timestamp: Date.now() }), secretKey)
-        const configs = {
+        const configsLogin = {
+          ...configs,
           connectToken,
-          appToken,
-          clientId,
-          env,
-          partner: {
-            type: "web",
-            paddingTop: 20,
-          },
-          // showLog: showLog ? "1" : "0",
-          // configColor: ["#00ffff", "#ff0000"],
-          publicKey: publicKey,
-          privateKey: privateKey,
-          appId: appID,
           phone: phoneNumber ?? ''
         }
 
         view.login(
-          configs,
+          configsLogin,
           (respone) => {
             document.getElementById("groupFunction").style.visibility = "visible"
             console.log('respone login', respone);

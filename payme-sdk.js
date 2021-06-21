@@ -1,4 +1,3 @@
-
 class MeAPI {
   constructor(
     config = {
@@ -53,7 +52,9 @@ class MeAPI {
       let decryptKey;
       try {
         const key = forge.pki.privateKeyFromPem(this.config.privateKey);
-        const { util } = forge;
+        const {
+          util
+        } = forge;
 
         const encrypted = util.decode64(xAPIKey);
 
@@ -150,7 +151,9 @@ class MeAPI {
       "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
     ).then(() => {
       const key = forge.pki.publicKeyFromPem(this.config.publicKey);
-      const { util } = forge;
+      const {
+        util
+      } = forge;
       const encrypt = key.encrypt(encryptKey, 'RSA-OAEP');
       const xAPIKey = util.encode64(encrypt);
       return xAPIKey;
@@ -179,6 +182,8 @@ class MeAPI {
     xAPIValidate,
     accessToken
   ) {
+
+    console.log('xapi', xAPIAction, xAPIClient, xAPIKey, xAPIMessage, xAPIValidate)
     const decryptKey = await this.decryptKey(xAPIAction, xAPIKey, xAPIMessage, xAPIValidate, method, accessToken);
 
     const result = await this.parseDecryptKey(xAPIMessage, decryptKey)
@@ -190,7 +195,10 @@ class MeAPI {
     const xAPIKey = await this.createXApiKey(encryptKey);
     let body = '';
 
-    const { xApiAction, xApiMessage } = await this.AESEncrypt(url, payload, encryptKey);
+    const {
+      xApiAction,
+      xApiMessage
+    } = await this.AESEncrypt(url, payload, encryptKey);
 
     const objValidate = {
       xApiAction,
@@ -251,6 +259,7 @@ class MeAPI {
         if (this.config.isSecurity === true) {
           try {
             const responseHeaders = response.headers;
+            console.log('response', response)
             const data = await this.ResponseDecrypt(
               responseHeaders['x-api-action'],
               'POST',
@@ -268,7 +277,9 @@ class MeAPI {
           } catch (error) {
             return {
               code: -3,
-              data: { message: error.message },
+              data: {
+                message: error.message
+              },
               original: response.data,
             };
           }
@@ -288,7 +299,9 @@ class MeAPI {
       return {
         code: -2,
         data: {
-          errors: [{ message: error.message }],
+          errors: [{
+            message: error.message
+          }],
         },
       };
     }
@@ -298,7 +311,7 @@ class MeAPI {
 
 class PaymeWebSdk {
   constructor(settings) {
-    this.configs = {};
+    this.configs = settings.configs;
     this.id = settings.id;
     this.dimension = {
       width: settings.width,
@@ -339,7 +352,10 @@ class PaymeWebSdk {
         document.getElementById(this.id).innerHTML = "";
         this.onCloseIframe();
         this.sendRespone({
-          error: { code: this.ERROR_CODE.CLOSE_IFRAME, message: "Đóng iframe" },
+          error: {
+            code: this.ERROR_CODE.CLOSE_IFRAME,
+            message: "Đóng iframe"
+          },
         });
       }
       if (e.data?.type === "error") {
@@ -378,7 +394,9 @@ class PaymeWebSdk {
       }
       if (e.data?.type === "onDeposit" || e.data?.type === "onWithDraw") {
         this.onCloseIframe();
-        const res = { ...e.data };
+        const res = {
+          ...e.data
+        };
         if (e.data?.data?.status === "FAILED") {
           res.error = e.data?.data;
         }
@@ -391,7 +409,7 @@ class PaymeWebSdk {
     EXPIRED: 401,
     NETWORK: -1,
     SYSTEM: -2,
-    LITMIT: -3,
+    LIMIT: -3,
     NOT_ACTIVED: -4,
     NOT_KYC: -5,
     PAYMENT_ERROR: -6,
@@ -451,24 +469,17 @@ class PaymeWebSdk {
   /**
    * Config API
    */
-  api_general = 'fe.payme.vn';
-
-  api_upload = 'static.payme.vn';
-
-  API_UPLOAD_VERSION = '/v1';
-  API_UPLOAD = `https://${this.api_upload}`;
-  API_UPLOAD_SANBOX = `https://sbx-${this.api_upload}`;
-
+  API_GENERAL = 'fe.payme.vn';
   GRAPHQL_DEV = 'https://dev-fe.payme.net.vn';
-  GRAPHQL_SANBOX = `https://sbx-${this.api_general}`;
-  GRAPHQL_STAGGING = `https://s${this.api_general}`;
-  GRAPHQL_PRODUCTION = `https://${this.api_general}`;
+  GRAPHQL_SANBOX = `https://sbx-${this.API_GENERAL}`;
+  GRAPHQL_STAGGING = `https://s${this.API_GENERAL}`;
+  GRAPHQL_PRODUCTION = `https://${this.API_GENERAL}`;
 
 
   /**
    * query graphql
    * 
-  */
+   */
   SQL_CLIENT_REGISTER = `mutation ClientRegister ($clientRegisterInput: ClientRegisterInput!){
       Client {
       Register(input: $clientRegisterInput) {
@@ -585,6 +596,19 @@ class PaymeWebSdk {
       }
     }
   }`;
+
+  SQL_GET_MERCHANT_INFO = `mutation Mutation($getInfoMerchantInput: OpenEWalletGetInfoMerchantInput!) {
+    OpenEWallet {
+      GetInfoMerchant(input: $getInfoMerchantInput) {
+        succeeded
+        message
+        merchantName
+        brandName
+        backgroundColor
+        storeImage
+      }
+    }
+  }`
 
   onCloseIframe() {
     this._iframe?.remove();
@@ -731,9 +755,15 @@ class PaymeWebSdk {
 
   handleResponse = (response) => {
     if (!response.data?.errors) {
-      return { status: true, response: response?.data?.data ?? {} };
+      return {
+        status: true,
+        response: response?.data?.data ?? {}
+      };
     } else {
-      return { status: false, response: response?.data?.errors ?? {} };
+      return {
+        status: false,
+        response: response?.data?.errors ?? {}
+      };
     }
   };
 
@@ -746,10 +776,9 @@ class PaymeWebSdk {
       isRoot: false,
     };
     const res = await this.callGraphql(
-      this.SQL_CLIENT_REGISTER,
-      {
-        clientRegisterInput,
-      },
+      this.SQL_CLIENT_REGISTER, {
+      clientRegisterInput,
+    },
       keys
     );
     return this.handleResponse(res);
@@ -762,10 +791,9 @@ class PaymeWebSdk {
       clientId: params.clientId,
     };
     const res = await this.callGraphql(
-      this.SQL_INIT_ACCOUNT,
-      {
-        initInput,
-      },
+      this.SQL_INIT_ACCOUNT, {
+      initInput,
+    },
       keys
     );
     return this.handleResponse(res);
@@ -779,7 +807,9 @@ class PaymeWebSdk {
   async findAccount(params, keys) {
     const res = await this.callGraphql(
       this.SQL_FIND_ACCOUNT,
-      params.phone ? { accountPhone: params.phone } : {},
+      params.phone ? {
+        accountPhone: params.phone
+      } : {},
       keys
     );
     return this.handleResponse(res);
@@ -787,8 +817,23 @@ class PaymeWebSdk {
 
   async getSettingServiceMain(params, keys) {
     const res = await this.callGraphql(
-      this.SQL_SETTING,
-      { configsAppId: params?.appId },
+      this.SQL_SETTING, {
+      configsAppId: params?.appId
+    },
+      keys
+    );
+    return this.handleResponse(res);
+  }
+
+  async getMerchantInfo(params, keys) {
+    const res = await this.callGraphql(
+      this.SQL_GET_MERCHANT_INFO,
+      {
+        getInfoMerchantInput: {
+          appId: params?.appId,
+          storeId: params?.storeId
+        }
+      },
       keys
     );
     return this.handleResponse(res);
@@ -802,8 +847,9 @@ class PaymeWebSdk {
       },
     };
     const res = await this.callGraphql(
-      this.SQL_PAYMENT_MEHTOD,
-      { PaymentMethodInput },
+      this.SQL_PAYMENT_MEHTOD, {
+      PaymentMethodInput
+    },
       keys
     );
     return this.handleResponse(res);
@@ -893,6 +939,7 @@ class PaymeWebSdk {
   }
 
   async createPayURL(param) {
+    console.log('this.configs', this.configs)
     const configs = {
       ...this.configs,
       actions: {
@@ -971,8 +1018,7 @@ class PaymeWebSdk {
     xApi,
     publicKey,
     privateKey,
-  }
-  ) {
+  }) {
     if (env !== 'production') {
       console.log(
         '[PAYLOAD]',
@@ -1020,7 +1066,9 @@ class PaymeWebSdk {
     } else if (response?.code === -2) {
       // Error chưa tới SERVER
       /* -- */
-      const { errors } = response.data;
+      const {
+        errors
+      } = response.data;
       if (errors && this.size(errors) > 0) {
         const error = errors[0];
         if (error.message === 'Network Error') {
@@ -1038,7 +1086,9 @@ class PaymeWebSdk {
       }
       /* -- */
     } else if (response?.code === 1) {
-      const { errors } = response.data;
+      const {
+        errors
+      } = response.data;
       if (errors && this.size(errors) > 0) {
         const error = errors[0];
         if (error.extensions?.code === 401) {
@@ -1056,9 +1106,9 @@ class PaymeWebSdk {
   }
 
   isOnline(onOnline, onDisconnect) {
-    var xhr = XMLHttpRequest
-      ? new XMLHttpRequest()
-      : new ActiveXObject("Microsoft.XMLHttp");
+    var xhr = XMLHttpRequest ?
+      new XMLHttpRequest() :
+      new ActiveXObject("Microsoft.XMLHttp");
     xhr.onload = function () {
       if (onOnline instanceof Function) {
         onOnline();
@@ -1080,12 +1130,12 @@ class PaymeWebSdk {
         this._iframe = ifrm;
 
         ifrm.setAttribute(`src`, link);
-        ifrm.style.width = this.dimension.width
-          ? `${this.dimension.width}px`
-          : "100%";
-        ifrm.style.height = this.dimension.height
-          ? `${this.dimension.height}px`
-          : "100%";
+        ifrm.style.width = this.dimension.width ?
+          `${this.dimension.width}px` :
+          "100%";
+        ifrm.style.height = this.dimension.height ?
+          `${this.dimension.height}px` :
+          "100%";
         ifrm.style.position = "absolute";
         ifrm.style.top = 0;
         ifrm.style.left = 0;
@@ -1101,7 +1151,10 @@ class PaymeWebSdk {
       },
       () => {
         this.sendRespone({
-          error: { code: this.ERROR_CODE.NETWORK, message: "Network Error!" },
+          error: {
+            code: this.ERROR_CODE.NETWORK,
+            message: "Network Error!"
+          },
         });
       }
     );
@@ -1127,14 +1180,17 @@ class PaymeWebSdk {
       element && element.appendChild(div);
     }, () => {
       this.sendRespone({
-        error: { code: this.ERROR_CODE.NETWORK, message: "Network Error!" },
+        error: {
+          code: this.ERROR_CODE.NETWORK,
+          message: "Network Error!"
+        },
       });
     })
   }
 
   async login(configs, onSuccess, onError) {
     const id = this.id;
-    this.configs = configs;
+    this.configs = { ...configs };
 
     try {
       const keys = {
@@ -1144,21 +1200,18 @@ class PaymeWebSdk {
         accessToken: '',
         appId: configs.appId ?? configs.xApi,
       };
-      const responseClientRegister = await this.clientRegister(
-        {
-          deviceId: configs.clientId,
-        },
+      const responseClientRegister = await this.clientRegister({
+        deviceId: configs.clientId,
+      },
         keys
       );
       if (responseClientRegister.status) {
         if (responseClientRegister.response?.Client?.Register?.succeeded) {
-          const responseAccountInit = await this.accountInit(
-            {
-              appToken: configs.appToken,
-              connectToken: configs.connectToken,
-              clientId:
-                responseClientRegister.response?.Client?.Register?.clientId,
-            },
+          const responseAccountInit = await this.accountInit({
+            appToken: configs.appToken,
+            connectToken: configs.connectToken,
+            clientId: responseClientRegister.response?.Client?.Register?.clientId,
+          },
             keys
           );
           if (responseAccountInit.status) {
@@ -1215,7 +1268,9 @@ class PaymeWebSdk {
               this.domain = this.getDomain(this.configs.env)
               // this._createUrlWebPaymeSdk = new PaymeWebSdk(newConfigs);
               this.isLogin = true;
-              onSuccess({ accountStatus: responseLogin.data.accountStatus });
+              onSuccess({
+                accountStatus: responseLogin.data.accountStatus
+              });
             } else if (!accessToken && updateToken) {
               const responseLogin = {
                 data: {
@@ -1237,35 +1292,51 @@ class PaymeWebSdk {
               this.domain = this.getDomain(this.configs.env)
               // this._createUrlWebPaymeSdk = new PaymeWebSdk(newConfigs);
               this.isLogin = true;
-              onSuccess({ accountStatus: responseLogin.data.accountStatus });
+              onSuccess({
+                accountStatus: responseLogin.data.accountStatus
+              });
             } else {
               onError({
                 code: this.ERROR_CODE.SYSTEM,
-                message:
-                  responseAccountInit.response?.OpenEWallet?.Init?.message ??
+                message: responseAccountInit.response?.OpenEWallet?.Init?.message ??
                   'Có lỗi từ máy chủ hệ thống',
               });
             }
 
+          } else {
+            if (responseAccountInit.response[0]?.extensions?.code === 401) {
+              onError({
+                code: this.ERROR_CODE.EXPIRED,
+                message: responseAccountInit.response[0]?.extensions?.message ??
+                  'Thông tin  xác thực không hợp lệ',
+              });
+            } else {
+              onError({
+                code: this.ERROR_CODE.SYSTEM,
+                message: 'Có lỗi từ máy chủ hệ thống',
+              });
+            }
           }
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message:
-              responseClientRegister.response?.Client?.Register?.message ??
+            message: responseClientRegister.response?.Client?.Register?.message ??
               'Có lỗi từ máy chủ hệ thống',
           });
-
         }
       } else {
-        onError({
-          code: this.ERROR_CODE.SYSTEM,
-          message:
-            responseClientRegister.response[0]?.message ??
-            responseClientRegister.response.message ??
-            'Có lỗi từ máy chủ hệ thống',
-        });
-
+        if (responseClientRegister.response[0]?.extensions?.code === 401) {
+          onError({
+            code: this.ERROR_CODE.EXPIRED,
+            message: responseClientRegister.response[0]?.extensions?.message ??
+              'Thông tin  xác thực không hợp lệ',
+          });
+        } else {
+          onError({
+            code: this.ERROR_CODE.SYSTEM,
+            message: 'Có lỗi từ máy chủ hệ thống',
+          });
+        }
       }
     } catch (error) {
       onError({
@@ -1277,7 +1348,10 @@ class PaymeWebSdk {
 
   async openWallet(onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1291,7 +1365,10 @@ class PaymeWebSdk {
 
   async withdraw(configs, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1313,7 +1390,10 @@ class PaymeWebSdk {
 
   async deposit(configs, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1335,7 +1415,10 @@ class PaymeWebSdk {
 
   async transfer(configs, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1357,8 +1440,47 @@ class PaymeWebSdk {
 
   async pay(configs, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
-      return;
+      const keys = {
+        env: this.configs?.env,
+        publicKey: this.configs?.publicKey,
+        privateKey: this.configs?.privateKey,
+        accessToken: this.configs?.accessToken,
+        appId: this.configs?.xApi ?? this.configs?.appId,
+      };
+      const responseGetMerchantInfo = await this.getMerchantInfo({
+        appId: this.configs?.xApi ?? this.configs?.appId,
+        storeId: configs?.storeId
+      }, keys)
+
+      if (responseGetMerchantInfo.status) {
+        if (responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.succeeded) {
+          const newConfigs = {
+            ...this.configs,
+            payStatus: this.ACCOUNT_STATUS.NOT_ACTIVED,
+            storeName: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.merchantName,
+            storeImage: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.storeImage
+          };
+          this.configs = newConfigs;
+          this.domain = this.getDomain(this.configs.env)
+        } else {
+          onError({
+            code: this.ERROR_CODE.SYSTEM,
+            message:
+              responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.message ??
+              'Có lỗi từ máy chủ hệ thống',
+          });
+          return
+        }
+      } else {
+        onError({
+          code: this.ERROR_CODE.SYSTEM,
+          message:
+            responseGetMerchantInfo.response[0]?.message ??
+            responseGetMerchantInfo.response.message ??
+            'Có lỗi từ máy chủ hệ thống',
+        });
+        return
+      }
     }
 
     // if (!this._checkActiveAndKyc()) {
@@ -1406,7 +1528,10 @@ class PaymeWebSdk {
 
   async getBalance(onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1417,6 +1542,8 @@ class PaymeWebSdk {
       });
       return;
     }
+
+    console.log('configsss', this.configs)
 
     try {
       const keys = {
@@ -1433,8 +1560,7 @@ class PaymeWebSdk {
         if (responseGetWalletInfo.response[0]?.extensions?.code === 401) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message:
-              responseGetWalletInfo.response[0]?.extensions?.message ??
+            message: responseGetWalletInfo.response[0]?.extensions?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -1454,7 +1580,10 @@ class PaymeWebSdk {
 
   async getListService(onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1494,8 +1623,7 @@ class PaymeWebSdk {
         ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message:
-              responseGsetSettingServiceMain.response[0]?.extensions?.message ??
+            message: responseGsetSettingServiceMain.response[0]?.extensions?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -1515,7 +1643,10 @@ class PaymeWebSdk {
 
   async getListPaymentMethod(param, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1551,17 +1682,15 @@ class PaymeWebSdk {
         } else {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message:
-              responseGetPaymentMethod.response?.Utility?.GetPaymentMethod
-                ?.message ?? 'Có lỗi từ máy chủ hệ thống',
+            message: responseGetPaymentMethod.response?.Utility?.GetPaymentMethod
+              ?.message ?? 'Có lỗi từ máy chủ hệ thống',
           });
         }
       } else {
         if (responseGetPaymentMethod.response[0]?.extensions?.code === 401) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message:
-              responseGetPaymentMethod.response[0]?.extensions?.message ??
+            message: responseGetPaymentMethod.response[0]?.extensions?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -1581,7 +1710,10 @@ class PaymeWebSdk {
 
   async getAccountInfo(onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
@@ -1592,7 +1724,7 @@ class PaymeWebSdk {
       });
       return;
     }
-    
+
     try {
       const params = {
         phone: this.configs.phone,
@@ -1611,8 +1743,7 @@ class PaymeWebSdk {
         if (responseFindAccount.response[0]?.extensions?.code === 401) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message:
-              responseFindAccount.response[0]?.extensions?.message ??
+            message: responseFindAccount.response[0]?.extensions?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -1632,7 +1763,10 @@ class PaymeWebSdk {
 
   async openService(serviceCode, onSuccess, onError) {
     if (!this.isLogin) {
-      onError({ code: this.ERROR_CODE.NOT_LOGIN, message: "NOT LOGIN" });
+      onError({
+        code: this.ERROR_CODE.NOT_LOGIN,
+        message: "NOT LOGIN"
+      });
       return;
     }
 
