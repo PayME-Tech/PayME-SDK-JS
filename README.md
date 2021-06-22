@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.5/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.6/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -39,6 +39,7 @@ Chuẩn mã hóa: RSA-512bit.
 ### Khởi tạo thư viện
 
 Trước khi sử dụng PayME SDK cần gọi phương thức khởi tạo để khởi tạo SDK.
+- Khi thay đổi configs cần khởi tạo lại PayME SDK để cập nhật
 
 ```javascript
 const configs = {

@@ -402,6 +402,7 @@ class PaymeWebSdk {
     };
   }
 
+
   ERROR_CODE = {
     EXPIRED: 401,
     NETWORK: -1,
@@ -1185,10 +1186,7 @@ class PaymeWebSdk {
     })
   }
 
-  async login(configs, onSuccess, onError) {
-    const id = this.id;
-    this.configs = { ...configs };
-
+  async init(configs, onSuccess, onError) {
     try {
       const keys = {
         env: configs.env,
@@ -1339,6 +1337,21 @@ class PaymeWebSdk {
         code: this.ERROR_CODE.SYSTEM,
         message: error.message ?? 'Có lỗi xảy ra',
       });
+    }
+  }
+
+  async login(configs, onSuccess, onError) {
+    const id = this.id;
+    this.configs = configs;
+
+    if (configs?.connectToken) {
+      this.init(configs, onSuccess, onError)
+    } else {
+      onError({
+        code: this.ERROR_CODE.SYSTEM,
+        message: 'Thiếu thông tin connectToken',
+      });
+      this.isLogin = false
     }
   }
 
