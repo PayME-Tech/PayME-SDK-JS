@@ -1456,6 +1456,52 @@ class PaymeWebSdk {
         accessToken: this.configs?.accessToken,
         appId: this.configs?.xApi ?? this.configs?.appId,
       };
+      const responseClientRegister = await this.clientRegister(
+        {
+          deviceId: this.configs?.clientId ?? this.configs?.deviceId
+        },
+        keys
+      )
+      if (responseClientRegister.status) {
+        if (responseClientRegister.response?.Client?.Register?.succeeded) {
+          const response = {
+            data: {
+              clientId:
+                responseClientRegister.response?.Client?.Register?.clientId
+            }
+          }
+          const newConfigs = {
+            ...this.configs,
+            ...response.data
+          }
+          this.configs = newConfigs
+        } else {
+          onError({
+            code: this.ERROR_CODE.SYSTEM,
+            message:
+              responseClientRegister.response?.Client?.Register?.message ??
+              'Có lỗi từ máy chủ hệ thống'
+          })
+          return
+        }
+      } else {
+        if (responseClientRegister.response[0]?.extensions?.code === 401) {
+          onError({
+            code: this.ERROR_CODE.EXPIRED,
+            message:
+              responseClientRegister.response[0]?.extensions?.message ??
+              'Thông tin  xác thực không hợp lệ'
+          })
+        } else {
+          onError({
+            code: this.ERROR_CODE.SYSTEM,
+            message:
+              responseClientRegister?.response?.message ??
+              'Có lỗi từ máy chủ hệ thống'
+          })
+        }
+        return
+      }
       const responseGetMerchantInfo = await this.getMerchantInfo({
         appId: this.configs?.xApi ?? this.configs?.appId,
         storeId: configs?.storeId
