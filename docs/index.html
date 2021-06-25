@@ -263,6 +263,8 @@
       <div class="groupFunctionNoNeedLogin">
         <p>Chức năng không cần login</p>
         <button class="button" onclick="pay()">Pay</button>
+        <button class="button" onclick="payQRCode()">Pay QRCode</button>
+        <button class="button" onclick="scanQR()">Scan QR</button>
       </div>
 
       <div id="groupFunction" class="groupFunction">
@@ -283,7 +285,8 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.8/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@5.9/payme-sdk.min.js"></script>
+  <!-- <script src="../payme-sdk.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -684,8 +687,44 @@
           console.log('error pay', error);
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
+          } else {
+            showErrorMessage(error)
           }
-          if (error?.code === ERROR_CODE.NOT_LOGIN) {
+        }
+      )
+    }
+
+    function payQRCode() {
+      const data = {
+        qrContent: "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+      }
+
+      view.payQRCode(
+        data,
+        (response) => {
+          console.log('onSucces payQRCode', response)
+        },
+        (error) => {
+          console.log('error payQRCode', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          } else if (error?.code !== ERROR_CODE.CLOSE_IFRAME) {
+            showErrorMessage(error)
+          }
+        }
+      )
+    }
+
+    function scanQR() {
+      view.scanQR(
+        (response) => {
+          console.log('onSucces scanQR', response)
+        },
+        (error) => {
+          console.log('error scanQR', error);
+          if (error?.code === ERROR_CODE.EXPIRED) {
+            logout()
+          } else if (error?.code !== ERROR_CODE.CLOSE_IFRAME) {
             showErrorMessage(error)
           }
         }
