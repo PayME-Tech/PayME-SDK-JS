@@ -401,8 +401,7 @@ class PaymeWebSdk {
       }
     };
   }
-
-
+  
   ERROR_CODE = {
     EXPIRED: 401,
     NETWORK: -1,
@@ -1942,7 +1941,7 @@ class PaymeWebSdk {
 
     try {
       const params = {
-        storeId: this.configs.storeId,
+        storeId: param?.storeId,
       };
       const keys = {
         env: this.configs.env,
