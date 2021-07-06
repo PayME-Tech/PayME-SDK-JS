@@ -260,19 +260,15 @@
         <p>Balance: </p>
         <p id="balance">0</p>
       </div> -->
-      <div class="groupFunctionNoNeedLogin">
-        <p>Chức năng không cần login</p>
-        <button class="button" onclick="pay()">Pay</button>
-        <button class="button" onclick="payQRCode()">Pay QRCode</button>
-        <button class="button" onclick="scanQR()">Scan QR</button>
-      </div>
-
       <div id="groupFunction" class="groupFunction">
         <button class="button" onclick="getBalance()">Get Balance</button>
         <button class="button" onclick="openWallet()">Open Wallet</button>
         <button class="button" onclick="deposit()">Deposit</button>
         <button class="button" onclick="withdraw()">Withdraw</button>
         <button class="button" onclick="transfer()">Transfer</button>
+        <button class="button" onclick="pay()">Pay</button>
+        <button class="button" onclick="payQRCode()">Pay QRCode</button>
+        <button class="button" onclick="scanQR()">Scan QR</button>
         <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
         <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
         <button class="button" onclick="getListService()">getListService</button>
@@ -285,7 +281,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@6.0/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@6.1/payme-sdk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -686,7 +682,7 @@
           console.log('error pay', error);
           if (error?.code === ERROR_CODE.EXPIRED) {
             logout()
-          } else {
+          } else if (error?.code !== ERROR_CODE.CLOSE_IFRAME) {
             showErrorMessage(error)
           }
         }

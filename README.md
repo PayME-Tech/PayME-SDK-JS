@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@6.0/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@6.1/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -93,8 +93,6 @@ Có 2 trường hợp
 -   Dùng khi accessToken hết hạn, khi gọi hàm của SDK mà trả về mã lỗi ERROR_CODE.EXPIRED, lúc này app cần gọi login lại để lấy accessToken dùng cho các chức năng khác.
   
 Sau khi gọi login() thành công rồi thì mới gọi các chức năng khác của SDK ( openWallet, pay, ... )
-
-Có thể sử dụng hàm pay khi chưa login để sử dụng 1 số phương thức được hỗ trợ
 
 ```javascript
 const configsLogin = {
