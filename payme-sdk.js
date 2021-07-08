@@ -845,7 +845,6 @@ class PaymeWebSdk {
       this.SQL_GET_MERCHANT_INFO,
       {
         getInfoMerchantInput: {
-          appId: params?.appId,
           storeId: params?.storeId
         }
       },
@@ -1606,7 +1605,6 @@ class PaymeWebSdk {
     };
 
     const responseGetMerchantInfo = await this.getMerchantInfo({
-      appId: this.configs?.xApi ?? this.configs?.appId,
       storeId: configs?.storeId
     }, keys)
 
