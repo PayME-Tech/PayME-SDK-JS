@@ -1597,6 +1597,54 @@ class PaymeWebSdk {
     //   }
     // }
 
+    const keys = {
+      env: this.configs?.env,
+      publicKey: this.configs?.publicKey,
+      privateKey: this.configs?.privateKey,
+      accessToken: this.configs?.accessToken,
+      appId: this.configs?.xApi ?? this.configs?.appId,
+    };
+
+    const responseGetMerchantInfo = await this.getMerchantInfo({
+      appId: this.configs?.xApi ?? this.configs?.appId,
+      storeId: configs?.storeId
+    }, keys)
+
+    if (responseGetMerchantInfo.status) {
+      if (responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.succeeded) {
+        const newConfigs = {
+          ...this.configs,
+          accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVED,
+          storeName: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.merchantName,
+          storeImage: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.storeImage
+        };
+        this.configs = newConfigs;
+        this.domain = this.getDomain(this.configs.env)
+      } else {
+        onError({
+          code: this.ERROR_CODE.SYSTEM,
+          message:
+            responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.message ??
+            'Có lỗi từ máy chủ hệ thống',
+        });
+        return
+      }
+    } else {
+      if (responseGetMerchantInfo.response[0]?.extensions?.code === 401) {
+        onError({
+          code: this.ERROR_CODE.EXPIRED,
+          message: responseGetMerchantInfo.response[0]?.extensions?.message ??
+            'Thông tin  xác thực không hợp lệ',
+        });
+      } else {
+        onError({
+          code: this.ERROR_CODE.SYSTEM,
+          message: responseGetMerchantInfo?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+        });
+      }
+      return
+    }
+
     if (configs?.method?.type === this.METHOD_TYPE.WALLET) {
       if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
         onError({
