@@ -21,6 +21,14 @@
       flex-direction: column;
     }
 
+    .payBox {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
     .buttonLogIn {
       display: flex;
       flex-direction: row;
@@ -266,11 +274,18 @@
         <button class="button" onclick="deposit()">Deposit</button>
         <button class="button" onclick="withdraw()">Withdraw</button>
         <button class="button" onclick="transfer()">Transfer</button>
-        <button class="button" onclick="pay()">Pay</button>
+        <div class="payBox">
+          <button style="flex: 1; margin-right: 8px;" onclick="pay()">Pay</button>
+          <select style="flex: 1;" id="dropdownPayCode" onchange="onSelectPayCode(this)">
+            <option value='PAYME' selected>PAYME</option>
+            <option value='CREDIT'>CREDIT</option>
+            <option value='ATM'>ATM</option>
+            <option value='MANUAL_BANK'>MANUAL_BANK</option>
+          </select>
+        </div>
         <button class="button" onclick="payQRCode()">Pay QRCode</button>
         <button class="button" onclick="scanQR()">Scan QR</button>
         <button class="button" onclick="getAccountInformation()">getAccountInformation</button>
-        <button class="button" onclick="getListPaymentMethod()">getListPaymentMethod</button>
         <button class="button" onclick="getListService()">getListService</button>
       </div>
     </div>
@@ -281,7 +296,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@6.3/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.0/payme-sdk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -347,6 +362,7 @@
     }
 
     let clientId = ''
+    let payCode = document.getElementById("dropdownPayCode").value
     let env = document.getElementById("dropdown").value
     let appID = CONFIGS[env].appId
     let appToken = CONFIGS[env].appToken
@@ -416,6 +432,10 @@
     function onSelect(obj) {
       handleChangeEnv(obj.value)
       env = obj.value
+    }
+
+    function onSelectPayCode(obj) {
+      payCode = obj.value
     }
 
     function onChangeSetting(value) {
@@ -673,7 +693,8 @@
         amount: 10000,
         orderId: Date.now().toString(),
         storeId: 24088141,
-        note: "note"
+        note: "note",
+        payCode: payCode
       },
         (response) => {
           console.log('onSucces Pay', response)
@@ -691,7 +712,8 @@
 
     function payQRCode() {
       const data = {
-        qrContent: "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+        qrContent: "OPENEWALLET|24088141|PAYMENT|20000|Chuyentien|2445562323",
+        payCode: payCode
       }
 
       view.payQRCode(
@@ -712,6 +734,9 @@
 
     function scanQR() {
       view.scanQR(
+        {
+          payCode: payCode
+        },
         (response) => {
           console.log('onSucces scanQR', response)
         },
