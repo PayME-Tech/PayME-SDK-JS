@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.0/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.1/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -116,6 +116,13 @@ payMe.login(
 | ------------------ | ------ | ---------------------- |
 | `ENV.SANDBOX` | `enum` | Môi trường sandbox. |
 | `ENV.PRODUCTION` | `enum` | Môi trường production. |
+
+| Property | Type | Description |
+| ------------------ | ------ | ---------------------- |
+| `NOT_ACTIVED` | `enum` | Tài khoản chưa kích hoạt. |
+| `NOT_KYC` | `enum` | Tài khoản chưa định danh. |
+| `KYC_APPROVED` | `enum` | Tài khoản đã định danh. |
+
 #### Parameters
 | Property | Type | Description |
 | -------------- | ---------- | ------------------------------------------------------------ |

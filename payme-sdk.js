@@ -421,7 +421,7 @@ class PaymeWebSdk {
   ACCOUNT_STATUS = {
     NOT_ACTIVED: 'NOT_ACTIVED',
     NOT_KYC: 'NOT_KYC',
-    KYC_OK: 'KYC_OK'
+    KYC_APPROVED: 'KYC_APPROVED'
   }
 
   METHOD_TYPE = {
@@ -652,7 +652,7 @@ class PaymeWebSdk {
   }
 
   _checkActiveAndKyc() {
-    if (this.configs?.accountStatus !== "KYC_OK") {
+    if (this.configs?.accountStatus !== this.ACCOUNT_STATUS.KYC_APPROVED) {
       return false;
     }
     return true;
@@ -1289,7 +1289,7 @@ class PaymeWebSdk {
                 responseAccountInit.response?.OpenEWallet?.Init?.kyc?.state ===
                 'APPROVED'
               ) {
-                accountStatus = this.ACCOUNT_STATUS.KYC_OK;
+                accountStatus = this.ACCOUNT_STATUS.KYC_APPROVED;
               } else {
                 accountStatus = this.ACCOUNT_STATUS.NOT_KYC;
               }
