@@ -407,8 +407,8 @@ class PaymeWebSdk {
     NETWORK: -1,
     SYSTEM: -2,
     LIMIT: -3,
-    NOT_ACTIVED: -4,
-    NOT_KYC: -5,
+    NOT_ACTIVATED: -4,
+    KYC_NOT_APPROVED: -5,
     PAYMENT_ERROR: -6,
     ERROR_KEY_ENCODE: -7,
     USER_CANCELLED: -8,
@@ -419,9 +419,11 @@ class PaymeWebSdk {
   };
 
   ACCOUNT_STATUS = {
-    NOT_ACTIVED: 'NOT_ACTIVED',
+    NOT_ACTIVATED: 'NOT_ACTIVATED',
     NOT_KYC: 'NOT_KYC',
-    KYC_APPROVED: 'KYC_APPROVED'
+    KYC_APPROVED: 'KYC_APPROVED',
+    KYC_REVIEW: 'KYC_REVIEW',
+    KYC_REJECTED: 'KYC_REJECTED'
   }
 
   METHOD_TYPE = {
@@ -1268,7 +1270,7 @@ class PaymeWebSdk {
               updateToken,
               kyc,
             } = responseAccountInit.response?.OpenEWallet?.Init ?? {};
-            let accountStatus = this.ACCOUNT_STATUS.NOT_ACTIVED;
+            let accountStatus = this.ACCOUNT_STATUS.NOT_ACTIVATED;
 
             // if (
             //   configs.phone &&
@@ -1285,11 +1287,21 @@ class PaymeWebSdk {
             ) {
               if (
                 responseAccountInit.response?.OpenEWallet?.Init?.kyc &&
-                responseAccountInit.response?.OpenEWallet?.Init?.kyc?.kycId &&
-                responseAccountInit.response?.OpenEWallet?.Init?.kyc?.state ===
-                'APPROVED'
+                responseAccountInit.response?.OpenEWallet?.Init?.kyc?.kycId
               ) {
-                accountStatus = this.ACCOUNT_STATUS.KYC_APPROVED;
+                if (
+                  responseAccountInit.response?.OpenEWallet?.Init?.kyc
+                    ?.state === 'APPROVED'
+                ) {
+                  accountStatus = this.ACCOUNT_STATUS.KYC_APPROVED
+                } else if (
+                  responseAccountInit.response?.OpenEWallet?.Init?.kyc
+                    ?.state === 'PENDING'
+                ) {
+                  accountStatus = this.ACCOUNT_STATUS.KYC_REVIEW
+                } else {
+                  accountStatus = this.ACCOUNT_STATUS.KYC_REJECTED
+                }
               } else {
                 accountStatus = this.ACCOUNT_STATUS.NOT_KYC;
               }
@@ -1432,7 +1444,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -1457,7 +1469,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -1482,7 +1494,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -1567,7 +1579,7 @@ class PaymeWebSdk {
     //     if (responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.succeeded) {
     //       const newConfigs = {
     //         ...this.configs,
-    //         accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVED,
+    //         accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVATED,
     //         storeName: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.merchantName,
     //         storeImage: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.storeImage
     //       };
@@ -1615,7 +1627,7 @@ class PaymeWebSdk {
       if (responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.succeeded) {
         const newConfigs = {
           ...this.configs,
-          accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVED,
+          accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVATED,
           storeName: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.merchantName,
           storeImage: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.storeImage
         };
@@ -1702,14 +1714,14 @@ class PaymeWebSdk {
     }
 
     // if (configs?.method?.type === this.METHOD_TYPE.WALLET) {
-    //   if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVED) {
+    //   if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_ACTIVATED) {
     //     onError({
-    //       code: this.ERROR_CODE.NOT_ACTIVED,
+    //       code: this.ERROR_CODE.NOT_ACTIVATED,
     //       message: 'Tài khoản chưa được active!'
     //     })
-    //   } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.NOT_KYC) {
+    //   } else if (this.configs.accountStatus === this.ACCOUNT_STATUS.KYC_NOT_APPROVED) {
     //     onError({
-    //       code: this.ERROR_CODE.NOT_KYC,
+    //       code: this.ERROR_CODE.KYC_NOT_APPROVED,
     //       message: 'Tài khoản chưa được định danh!'
     //     })
     //   } else {
@@ -1835,7 +1847,7 @@ class PaymeWebSdk {
     //       const newConfigs = {
     //         ...this.configs,
     //         ...response.data,
-    //         accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVED
+    //         accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVATED
     //       }
     //       this.configs = newConfigs;
     //       this.domain = this.getDomain(this.configs.env)
@@ -2005,7 +2017,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -2055,7 +2067,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -2118,7 +2130,7 @@ class PaymeWebSdk {
 
   //   // if (!this._checkActiveAndKyc()) {
   //   //   onError({
-  //   //     code: this.ERROR_CODE[this.configs.accountStatus],
+  //   //     code: this.ERROR_CODE.KYC_NOT_APPROVED,
   //   //     message: this.configs.accountStatus,
   //   //   });
   //   //   return;
@@ -2185,7 +2197,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
@@ -2238,7 +2250,7 @@ class PaymeWebSdk {
 
     if (!this._checkActiveAndKyc()) {
       onError({
-        code: this.ERROR_CODE[this.configs.accountStatus],
+        code: this.ERROR_CODE.KYC_NOT_APPROVED,
         message: this.configs.accountStatus,
       });
       return;
