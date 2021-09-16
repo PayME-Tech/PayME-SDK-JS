@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.2/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.3/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -136,9 +136,9 @@ connectToken cần để truyền gọi api từ tới PayME và sẽ được t
 ```javascript
 import crypto from 'crypto'
 const data = {
- timestamp:  34343242342,
- userId :  "ABC",
- phone :  "0909998877"
+ timestamp: "2021-01-20T06:53:07.621Z",
+ userId : "ABC",
+ phone : "0909998877"
 }
 const algorithm = `aes-256-cbc`
 const ivbyte = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -178,6 +178,23 @@ payMe.openWallet(
    }
 )
 ```
+
+#### openHistory
+Hàm này được gọi khi từ app tích hợp khi muốn mở lịch sử giao dịch từ ví.
+
+⚠️⚠️⚠️ version 7.3 trở đi
+
+```javascript
+payMe.openHistory(
+   (response) => {
+      // onSuccess
+   },
+   (error) => {
+      // onError
+   }
+)
+```
+
 #### scanQR
 Mở chức năng quét mã QR để thanh toán
 

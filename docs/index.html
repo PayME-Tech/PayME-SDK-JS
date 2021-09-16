@@ -271,6 +271,7 @@
       <div id="groupFunction" class="groupFunction">
         <button class="button" onclick="getBalance()">Get Balance</button>
         <button class="button" onclick="openWallet()">Open Wallet</button>
+        <button class="button" onclick="openHistory()">Open History</button>
         <button class="button" onclick="deposit()">Deposit</button>
         <button class="button" onclick="withdraw()">Withdraw</button>
         <button class="button" onclick="transfer()">Transfer</button>
@@ -281,6 +282,9 @@
             <option value='CREDIT'>CREDIT</option>
             <option value='ATM'>ATM</option>
             <option value='MANUAL_BANK'>MANUAL_BANK</option>
+            <option value='VN_PAY'>VN_PAY</option>
+            <option value='MOMO'>MOMO</option>
+            <option value='ZALO_PAY'>ZALO_PAY</option>
           </select>
         </div>
         <button class="button" onclick="payQRCode()">Pay QRCode</button>
@@ -296,7 +300,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.2/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.3/payme-sdk.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
     onload="getFingerPrint()"></script>
@@ -369,6 +373,7 @@
     let publicKey = CONFIGS[env].publicKey
     let privateKey = CONFIGS[env].privateKey
     let secretKey = CONFIGS[env].secretKey
+    let storeId = CONFIGS[env].storeId
     let isLogin = false
     let view = null
     let configs = {
@@ -480,6 +485,7 @@
       publicKey = CONFIGS[env].publicKey
       privateKey = CONFIGS[env].privateKey
       secretKey = CONFIGS[env].secretKey
+      storeId = CONFIGS[env].storeId
       configs = {
         ...configs,
         env,
@@ -627,6 +633,27 @@
       )
     }
 
+    function openHistory() {
+      view.openHistory(
+        (response) => {
+          hideLoading()
+          console.log('onSucces openHistory', response)
+        },
+        (error) => {
+          if (error?.code === ERROR_CODE.CLOSE_IFRAME) {
+            console.log('Close iFrame')
+          } else {
+            if (error?.code === ERROR_CODE.EXPIRED) {
+              logout()
+            }
+            showErrorMessage(error)
+          }
+          hideLoading()
+          console.log('error openHistory', error);
+        }
+      )
+    }
+
     function deposit() {
       view.deposit({
         amount: 10000,
@@ -692,7 +719,7 @@
       view.pay({
         amount: 10000,
         orderId: Date.now().toString(),
-        storeId: 24088141,
+        storeId: storeId,
         note: "note",
         payCode: payCode
       },
@@ -792,7 +819,7 @@
       showLoading()
       view.getListPaymentMethod(
         {
-          storeId: 24088141
+          storeId: storeId
         },
         (response) => {
           hideLoading()
