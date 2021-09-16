@@ -182,7 +182,7 @@ payMe.openWallet(
 #### openHistory
 Hàm này được gọi khi từ app tích hợp khi muốn mở lịch sử giao dịch từ ví.
 
-⚠️⚠️⚠️ version 7.3 trở đi
+⚠️⚠️⚠️ version 7.4 trở đi
 
 ```javascript
 payMe.openHistory(
