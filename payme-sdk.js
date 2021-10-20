@@ -828,7 +828,7 @@ class PaymeWebSdk {
     return this.handleResponse(res);
   };
 
-  async getWalletInfo(params, keys) {
+  async getWalletInfoAPI(params, keys) {
     const res = await this.callGraphql(this.SQL_GET_BALANCE, {}, keys);
     return this.handleResponse(res);
   }
@@ -903,19 +903,6 @@ class PaymeWebSdk {
       ...this.configs,
       actions: {
         type: this.WALLET_ACTIONS.LOGIN,
-      },
-    };
-
-    const encrypt = await this.encrypt(configs);
-
-    return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
-  }
-
-  async createGetBalanceURL() {
-    const configs = {
-      ...this.configs,
-      actions: {
-        type: this.WALLET_ACTIONS.GET_WALLET_INFO,
       },
     };
 
@@ -1005,18 +992,6 @@ class PaymeWebSdk {
         note: param.note,
         isShowResultUI: param.isShowResultUI,
         payCode: param.payCode
-      },
-    };
-    const encrypt = await this.encrypt(configs);
-
-    return this.domain + "/getDataWithAction/" + encodeURIComponent(encrypt);
-  }
-
-  async createGetAccountInfoURL() {
-    const configs = {
-      ...this.configs,
-      actions: {
-        type: this.WALLET_ACTIONS.GET_ACCOUNT_INFO,
       },
     };
     const encrypt = await this.encrypt(configs);
@@ -1865,7 +1840,7 @@ class PaymeWebSdk {
     }
   }
 
-  async getBalance(onSuccess, onError) {
+  async getWalletInfo(onSuccess, onError) {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
@@ -1890,7 +1865,7 @@ class PaymeWebSdk {
         accessToken: this.configs.accessToken,
         appId: this.configs?.xApi ?? this.configs?.appId,
       };
-      const responseGetWalletInfo = await this.getWalletInfo({}, keys);
+      const responseGetWalletInfo = await this.getWalletInfoAPI({}, keys);
       if (responseGetWalletInfo.status) {
         onSuccess(responseGetWalletInfo.response?.Wallet ?? {});
       } else {
