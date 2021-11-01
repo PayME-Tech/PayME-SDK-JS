@@ -389,7 +389,7 @@ class PaymeWebSdk {
         this.onCloseIframe();
         this.sendRespone(e.data);
       }
-      if (e.data?.type === "onDeposit" || e.data?.type === "onWithDraw") {
+      if (e.data?.type === "onDeposit" || e.data?.type === "onWithDraw" || e.data?.type === "onTransfer") {
         this.onCloseIframe();
         const res = {
           ...e.data
