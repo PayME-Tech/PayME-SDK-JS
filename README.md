@@ -23,13 +23,13 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.5/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.6/payme-sdk.min.js"></script>
 ```
    
 ## Usage
 Hệ thống PayME sẽ cung cấp cho app tích hợp các thông tin sau:
 -   **PublicKey**  : Dùng để mã hóa dữ liệu, app tích hợp cần truyền cho SDK để mã hóa.
--   **AppToken**  : AppId cấp riêng định danh cho mỗi app, cần truyền cho SDK để mã hóa
+-   **AppToken**  : AppToken cấp riêng định danh cho mỗi app, cần truyền cho SDK để mã hóa
 -   **SecretKey**  : Dùng đã mã hóa và xác thực dữ liệu ở hệ thống backend cho app tích hợp.
 Bên App sẽ cung cấp cho hệ thống PayME các thông tin sau:
 -   **AppPublicKey**  : Sẽ gửi qua hệ thống backend của PayME dùng để mã hóa.
@@ -82,7 +82,6 @@ const payMe = new PaymeWebSdk({ id, configs })
 | `ERROR_KEY_ENCODE` | `-7` | Lỗi mã hóa/giải mã dữ liệu |
 | `USER_CANCELLED` | `-8` | Người dùng thao tác hủy | 
 | `NOT_LOGIN` | `-9` | Lỗi tài khoản chưa login | 
-| `CLOSE_IFRAME` | `-10` | Đóng Iframe | 
 | `BALANCE_ERROR` | `-11` | Lỗi số dư ví không đủ | 
 | `UNKNOWN_PAYCODE` | `-12` | Lỗi thiếu thông tin payCode |  
 
