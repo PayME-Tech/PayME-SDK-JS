@@ -23,7 +23,7 @@ Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/Web
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.8/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@7.9/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -220,18 +220,19 @@ payMe.scanQR(
 
 Định dạng QR: 
 ```javascript
-const qrString = "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}"
+const qrString = "{$type}|${storeId}|${action}|${amount}|${note}|${orderId}|${userName}"
 ``` 
 - action: loại giao dịch ( 'PAYMENT' => thanh toán)
 - amount: số tiền thanh toán
 - note: Mô tả giao dịch từ phía đối tác
-- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch
+- orderId: mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch. Tối đa 22 kí tự.
 - storeId: ID của store phía công thanh toán thực hiên giao dịch thanh toán
+- userName: Tên tài khoản
 - type: OPENEWALLET
 
 Ví dụ :
 ```javascript
-const qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323"
+const qrString = "OPENEWALLET|54938607|PAYMENT|20000|Chuyentien|2445562323|taikhoan"
 ```
 
 #### payQRCode
@@ -256,7 +257,7 @@ payMe.payQRCode(
 ```
 | **Tham số** | **Bắt buộc** | **Giải thích** |
 | :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
-| qrContent | Yes| Nội dung QR Code |
+| qrContent | Yes| Nội dung QR Code. Định dạng QR giống hàm scanQR() |
 | payCode | Yes | [Danh sách phương thức thanh toán](#danh-sách-phương-thức-thanh-toán) |
 | isShowResultUI | No | Option hiển thị UI kết quả thanh toán. Default: true |
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
@@ -400,7 +401,8 @@ Hàm này được dùng khi app cần thanh toán 1 khoản tiền từ ví Pay
 const  data = {
  amount:  Number,
  orderId:  String,
- storeId:  Number,
+ storeId:  Number?,
+ userName:  String?,
  extractData: String,
  note:  String,
  isShowResultUI: Boolean?,
@@ -420,8 +422,9 @@ payMe.pay(
 | :----------------------------------------------------------- | :----------- | :----------------------------------------------------------- |
 | amount | Yes | Số tiền cần thanh toán bên app truyền qua cho SDK. |
 | note | No | Mô tả giao dịch từ phía đối tác. |
-| orderId | Yes | Mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch. |
-| storeId | Yes | ID của store phía công thanh toán thực hiên giao dịch thanh toán. |
+| orderId | Yes | Mã giao dịch của đối tác, cần duy nhất trên mỗi giao dịch. Tối đa 22 kí tự. |
+| storeId | No | ID của store phía công thanh toán thực hiên giao dịch thanh toán. |
+| userName | No | Tên tài khoản. |
 | isShowResultUI | No | Option hiển thị UI kết quả thanh toán. Default: true |
 | payCode | Yes | [Danh sách phương thức thanh toán](#danh-sách-phương-thức-thanh-toán) |
 | onSuccess | Yes | Dùng để bắt callback khi thực hiện giao dịch thành công từ PayME SDK |
@@ -455,7 +458,6 @@ payMe.getWalletInfo(response => {
 | PAYME  | Thanh toán ví PayME |
 | ATM  | Thanh toán thẻ ATM Nội địa |
 | MANUAL_BANK  | Thanh toán chuyển khoản ngân hàng |
-| VN_PAY  | Thanh toán QR Code ngân hàng |
 | CREDIT  | Thanh toán thẻ tín dụng |
 
 ## License
