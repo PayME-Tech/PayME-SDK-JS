@@ -1213,7 +1213,7 @@ class PaymeWebSdk {
       let ifrm = document.createElement("iframe");
       this._iframe = ifrm;
 
-      div.style.visibility = "hidden";
+      div.style.visibility = "hidden";x
       div.style.display = "block";
       div.style.width = 0;
       div.style.height = 0;

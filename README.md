@@ -1,3 +1,5 @@
+[![en](https://img.shields.io/badge/lang-en-yellow.svg)](https://github.com/PayME-Tech/PayME-SDK-JS/blob/master/README_EN.md)
+
 PayME SDK là bộ thư viện để các app có thể tương tác với PayME Platform. PayME SDK bao gồm các chức năng chính như sau:
 -   Hệ thống đăng ký, đăng nhập, eKYC thông qua tài khoản ví PayME
 -   Chức năng nạp rút chuyển tiền từ ví PayME.
