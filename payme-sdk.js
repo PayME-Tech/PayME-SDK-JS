@@ -348,12 +348,6 @@ class PaymeWebSdk {
       if (e.data?.type === "onClose") {
         document.getElementById(this.id).innerHTML = "";
         this.onCloseIframe();
-        this.sendRespone({
-          error: {
-            code: this.ERROR_CODE.CLOSE_IFRAME,
-            message: "Đóng iframe"
-          },
-        });
       }
       if (e.data?.type === "error") {
         if (e.data?.code === 401) {
@@ -413,7 +407,7 @@ class PaymeWebSdk {
     ERROR_KEY_ENCODE: -7,
     USER_CANCELLED: -8,
     NOT_LOGIN: -9,
-    CLOSE_IFRAME: -10,
+    // CLOSE_IFRAME: -10,
     BALANCE_ERROR: -11,
     UNKNOWN_PAYCODE: -12
   };
@@ -423,7 +417,6 @@ class PaymeWebSdk {
     ATM: 'ATM',
     CREDIT: 'CREDIT',
     MANUAL_BANK: 'MANUAL_BANK',
-    VN_PAY: 'VN_PAY',
     MOMO: 'MOMO',
     ZALO_PAY: 'ZALO_PAY'
   }
@@ -633,6 +626,7 @@ class PaymeWebSdk {
           action
           amount
           note
+          userName
           orderId
         }
       }
@@ -859,7 +853,8 @@ class PaymeWebSdk {
       this.SQL_GET_MERCHANT_INFO,
       {
         getInfoMerchantInput: {
-          storeId: params?.storeId
+          storeId: params?.storeId,
+          appId: params?.appId
         }
       },
       keys
@@ -981,7 +976,6 @@ class PaymeWebSdk {
   }
 
   async createPayURL(param) {
-    console.log('this.configs', this.configs)
     const configs = {
       ...this.configs,
       actions: {
@@ -990,6 +984,7 @@ class PaymeWebSdk {
         orderId: param.orderId,
         storeId: param.storeId,
         note: param.note,
+        userName: param.userName,
         isShowResultUI: param.isShowResultUI,
         payCode: param.payCode
       },
@@ -1635,7 +1630,8 @@ class PaymeWebSdk {
     };
 
     const responseGetMerchantInfo = await this.getMerchantInfo({
-      storeId: param?.storeId
+      storeId: param?.storeId,
+      appId: this.configs?.xApi ?? this.configs?.appId
     }, keys)
 
     if (responseGetMerchantInfo.status) {
@@ -1713,7 +1709,7 @@ class PaymeWebSdk {
       })
       return
     }
-    
+
     const id = this.id;
     const iframe = await this.createScanQR(param);
     this.openIframe(iframe);
@@ -1784,6 +1780,8 @@ class PaymeWebSdk {
                   ?.orderId,
               note:
                 responseQRString?.response?.OpenEWallet?.Payment?.Detect?.note,
+              userName:
+                responseQRString?.response?.OpenEWallet?.Payment?.Detect?.userName,
               isShowResultUI: param?.isShowResultUI,
               payCode: param?.payCode
             }
