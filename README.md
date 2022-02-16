@@ -148,6 +148,35 @@ const cipher = crypto.createCipheriv(algorithm, secretKey, iv)
 const encrypted = cipher.update(JSON.stringify(data), 'utf8', 'base64')
 const connectToken = encrypted + cipher.final('base64')
 ```
+
+Tạo connectToken bao gồm thông tin KYC (Dành cho các đối tác có hệ thống KYC riêng)
+
+```javascript
+const data = {
+  timestamp: "2021-01-20T06:53:07.621Z",
+  userId : "abc",
+  phone : "0123456789",
+  kycInfo: {
+    fullname: "Nguyễn Văn A",
+    gender: "MALE",
+    birthday: "1995-01-20T06:53:07.621Z",
+    address: "15 Nguyễn cơ thạch",
+    identifyType: "CMND",
+    identifyNumber: "142744332",
+    issuedAt: "2013-01-20T06:53:07.621Z",
+    placeOfIssue: "Hồ Chí Minh",
+    video: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+    face: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+    image: {
+      front: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg",
+      back: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg"
+    }
+  }
+};
+
+const connectToken = encryptAES(JSON.stringify(data), appSecretkey)
+```
+
 | **Tham số** | **Bắt buộc** | **Giải thích** |
 | :------------ | :----------- | :----------------------------------------------------------- |
 | **timestamp** | Yes | Thời gian tạo ra connectToken theo định dạng iSO 8601 , Dùng để xác định thời gian timeout của connectToken. Ví dụ 2021-01-20T06:53:07.621Z |
