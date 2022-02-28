@@ -1925,7 +1925,7 @@ class PaymeWebSdk {
           (itemSetting) => itemSetting?.key === 'service.main.visible'
         );
         const valueStr = service[0]?.value ?? '';
-        const list = JSON.parse(valueStr)?.listService;
+        const list = valueStr ? JSON.parse(valueStr)?.listService : [];
         onSuccess(list);
       } else {
         if (
