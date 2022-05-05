@@ -350,7 +350,11 @@ class PaymeWebSdk {
         this.onCloseIframe();
       }
       if (e.data?.type === "error") {
-        if (e.data?.code === 401) {
+        if (e.data?.code === this.ERROR_CODE.EXPIRED) {
+          this.onCloseIframe();
+          this.isLogin = false;
+        }
+        if (e.data?.code === this.ERROR_CODE.ACCOUNT_LOCK) {
           this.onCloseIframe();
           this.isLogin = false;
         }
@@ -398,6 +402,7 @@ class PaymeWebSdk {
 
   ERROR_CODE = {
     EXPIRED: 401,
+    ACCOUNT_LOCK: 405,
     NETWORK: -1,
     SYSTEM: -2,
     LIMIT: -3,
@@ -418,7 +423,8 @@ class PaymeWebSdk {
     CREDIT: 'CREDIT',
     MANUAL_BANK: 'MANUAL_BANK',
     MOMO: 'MOMO',
-    ZALO_PAY: 'ZALO_PAY'
+    ZALO_PAY: 'ZALO_PAY',
+    VIET_QR: 'VIET_QR'
   }
 
   ACCOUNT_STATUS = {
@@ -640,7 +646,7 @@ class PaymeWebSdk {
   sendRespone(data) {
     if (data?.error) {
       if (this._onError) this._onError(data?.error);
-    } else if (data?.code === 401) {
+    } else if (data?.code === this.ERROR_CODE.EXPIRED) {
       if (this._onError) this._onError(data);
     } else {
       if (this._onSuccess) this._onSuccess(data);
@@ -852,8 +858,10 @@ class PaymeWebSdk {
     const res = await this.callGraphql(
       this.SQL_GET_MERCHANT_INFO,
       {
-        getInfoMerchantInput: {
+        getInfoMerchantInput: params?.storeId ? {
           storeId: params?.storeId,
+          appId: params?.appId
+        } : {
           appId: params?.appId
         }
       },
@@ -1129,7 +1137,7 @@ class PaymeWebSdk {
       } = response.data;
       if (errors && this.size(errors) > 0) {
         const error = errors[0];
-        if (error.extensions?.code === 401) {
+        if (error.extensions?.code === this.ERROR_CODE.EXPIRED) {
           console.log(error.message ?? 'Thông tin xác thực không hợp lệ');
         } else if (error.extensions?.code === 400) {
           console.log('Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0002');
@@ -1208,7 +1216,7 @@ class PaymeWebSdk {
       let ifrm = document.createElement("iframe");
       this._iframe = ifrm;
 
-      div.style.visibility = "hidden";x
+      div.style.visibility = "hidden"; x
       div.style.display = "block";
       div.style.width = 0;
       div.style.height = 0;
@@ -1352,7 +1360,7 @@ class PaymeWebSdk {
               });
             }
           } else {
-            if (responseAccountInit.response[0]?.extensions?.code === 401) {
+            if (responseAccountInit.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
               onError({
                 code: this.ERROR_CODE.EXPIRED,
                 message: responseAccountInit.response[0]?.extensions?.message ??
@@ -1373,7 +1381,7 @@ class PaymeWebSdk {
           });
         }
       } else {
-        if (responseClientRegister.response[0]?.extensions?.code === 401) {
+        if (responseClientRegister.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
             message: responseClientRegister.response[0]?.extensions?.message ??
@@ -1654,7 +1662,7 @@ class PaymeWebSdk {
         return
       }
     } else {
-      if (responseGetMerchantInfo.response[0]?.extensions?.code === 401) {
+      if (responseGetMerchantInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
         onError({
           code: this.ERROR_CODE.EXPIRED,
           message: responseGetMerchantInfo.response[0]?.extensions?.message ??
@@ -1795,7 +1803,7 @@ class PaymeWebSdk {
             })
           }
         } else {
-          if (responseQRString.response[0]?.extensions?.code === 401) {
+          if (responseQRString.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
             onError({
               code: this.ERROR_CODE.EXPIRED,
               message:
@@ -1820,7 +1828,7 @@ class PaymeWebSdk {
         })
       }
     } else {
-      if (responseClientRegister.response[0]?.extensions?.code === 401) {
+      if (responseClientRegister.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
         onError({
           code: this.ERROR_CODE.EXPIRED,
           message:
@@ -1867,7 +1875,7 @@ class PaymeWebSdk {
       if (responseGetWalletInfo.status) {
         onSuccess(responseGetWalletInfo.response?.Wallet ?? {});
       } else {
-        if (responseGetWalletInfo.response[0]?.extensions?.code === 401) {
+        if (responseGetWalletInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
             message: responseGetWalletInfo.response[0]?.extensions?.message ??
@@ -1929,7 +1937,7 @@ class PaymeWebSdk {
         onSuccess(list);
       } else {
         if (
-          responseGetSettingServiceMain.response[0]?.extensions?.code === 401
+          responseGetSettingServiceMain.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED
         ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
@@ -2050,7 +2058,7 @@ class PaymeWebSdk {
       if (responseFindAccount.status) {
         onSuccess(responseFindAccount.response?.Account ?? {});
       } else {
-        if (responseFindAccount.response[0]?.extensions?.code === 401) {
+        if (responseFindAccount.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
             message: responseFindAccount.response[0]?.extensions?.message ??

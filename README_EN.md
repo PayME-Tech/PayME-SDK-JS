@@ -18,7 +18,7 @@ Place the following `<scripts>` tag near the bottom of your pages, just before t
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.0/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.1/payme-sdk.min.js"></script>
 ```
    
 ## Usage
@@ -73,6 +73,7 @@ const payMe = new PaymeWebSdk({ id, configs })
 | Constant | Error Code | Description 
 | -------------- | ---------- | -------- |
 | `EXPIRED` | `401` | Expired token |
+| `ACCOUNT_LOCK` | `405` | Actively locked account |
 | `NETWORK` | `-1` |  Network connection problem |
 | `SYSTEM` | `-2` |  System error |
 | `LIMIT` | `-3` |  The payment amount exceeds or is less than the transaction limit. |
@@ -91,7 +92,7 @@ There are 2 cases
 
 -  Used to login for the first time right after initializing PayME.
     
--  Used when the accessToken expires, when calling the SDK function that returns the error code ERROR_CODE.EXPIRED, the application needs to call login again to get the accessToken for other functions.
+-  Used when the accessToken expires, when calling the SDK function that returns the error code ERROR_CODE.EXPIRED or ERROR_CODE.ACCOUNT_LOCK, the application needs to call login again to get the accessToken for other functions.
     
 After calling login() successfully, then call other functions of the SDK (openWallet, pay, ...)
 
@@ -551,6 +552,7 @@ payMe.getWalletInfo(response => {
 | ATM | Domestic ATM card payment |
 | MANUAL_BANK | Bank transfer payment |
 | CREDIT | Credit card payments |
+| VIET_QR | VietQR payments |
 
 ## License
 Copyright 2020 @ [PayME](payme.vn)
