@@ -640,6 +640,12 @@ class PaymeWebSdk {
   }`
 
   onCloseIframe() {
+    if (this._onError) {
+      this._onError({
+        code: this.ERROR_CODE.USER_CANCELLED,
+        message: 'Đóng SDK',
+      });
+    }
     this._iframe?.remove();
   }
 
