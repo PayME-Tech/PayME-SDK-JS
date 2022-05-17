@@ -1254,7 +1254,7 @@ class PaymeWebSdk {
         appId: configs.appId ?? configs.xApi,
       };
       const responseClientRegister = await this.clientRegister({
-        deviceId: configs.clientId,
+        deviceId: configs?.clientId ?? configs?.deviceId,
       },
         keys
       );
