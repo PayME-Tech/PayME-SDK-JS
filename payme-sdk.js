@@ -47,7 +47,7 @@ class MeAPI {
     accessToken
   ) {
     return this.loadScript(
-      "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+      "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
     ).then(async () => {
       let decryptKey;
       try {
@@ -136,7 +136,7 @@ class MeAPI {
 
   createXApiValidate(objValidate, encryptKey) {
     return this.loadScript(
-      "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+      "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
     ).then(async () => {
       const md = forge.md.md5.create();
       const objValidateValue = await this.values(objValidate)
@@ -148,7 +148,7 @@ class MeAPI {
 
   createXApiKey(encryptKey) {
     return this.loadScript(
-      "https://cdn.jsdelivr.net/npm/node-forge@0.10.0/lib/index.js"
+      "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
     ).then(() => {
       const key = forge.pki.publicKeyFromPem(this.config.publicKey);
       const {

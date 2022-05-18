@@ -300,7 +300,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.3/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.4/payme-sdk.min.js"></script>
   <!-- <script src="../payme-sdk.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
@@ -325,19 +325,18 @@
         appToken:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6OTcsImlhdCI6MTY1MjE2OTk0N30.fWs8hd1jg-2Jmzfv2Lja9tX7gpHxGyqPzQ5pmJXXWbE",
         publicKey: `-----BEGIN PUBLIC KEY-----
-        MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIO2n60FOa0z1tGOJDJSUk/8VqPK/6Pn
-        JcJxuNnIhqUKHQuk8HEtpaAXnulcBQS6ddfMuhWG+Vl7+0O1qXKslYUCAwEAAQ==
-        -----END PUBLIC KEY-----`,
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIO2n60FOa0z1tGOJDJSUk/8VqPK/6Pn
+JcJxuNnIhqUKHQuk8HEtpaAXnulcBQS6ddfMuhWG+Vl7+0O1qXKslYUCAwEAAQ==
+-----END PUBLIC KEY-----`,
         privateKey: `-----BEGIN RSA PRIVATE KEY-----
-        MIIBOwIBAAJBAJqkCtkbTurkP9r7fhjsIZ0Fb8I8cyeqA1EoPGLIQXIVO5C0Gx5I
-        zcMOZHb5s/o2sFYrEUWoY9Tc8iEdfULlyQkCAwEAAQJBAI0CaKHwNNYbq96S1TkE
-        mOIFwxLq7FaOwNeQSQAKeyL6rilXnGfJS8XVBcHtG5W/mvEsBYgBXZo1ugqDfE+x
-        qwECIQDRrq7h88IOUDrDurrvMxQHRO8hqifc+nJdFCr6225ZNQIhALzM0QoDOmDM
-        IciHHSAy+IE95JYTa0FNnoSZiP7t4j8FAiBuVHAIzG4rgeOp4bNC8al0Ob1qBVJ8
-        X/uVJmuHG7bwkQIgM1m9zWxdV3COC718FYLnhjdwUcVMWcGjyMr9sODAtYUCIQDK
-        z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
-        -----END RSA PRIVATE KEY-----
-        `,
+MIIBOwIBAAJBAJqkCtkbTurkP9r7fhjsIZ0Fb8I8cyeqA1EoPGLIQXIVO5C0Gx5I
+zcMOZHb5s/o2sFYrEUWoY9Tc8iEdfULlyQkCAwEAAQJBAI0CaKHwNNYbq96S1TkE
+mOIFwxLq7FaOwNeQSQAKeyL6rilXnGfJS8XVBcHtG5W/mvEsBYgBXZo1ugqDfE+x
+qwECIQDRrq7h88IOUDrDurrvMxQHRO8hqifc+nJdFCr6225ZNQIhALzM0QoDOmDM
+IciHHSAy+IE95JYTa0FNnoSZiP7t4j8FAiBuVHAIzG4rgeOp4bNC8al0Ob1qBVJ8
+X/uVJmuHG7bwkQIgM1m9zWxdV3COC718FYLnhjdwUcVMWcGjyMr9sODAtYUCIQDK
+z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
+-----END RSA PRIVATE KEY-----`,
         env: "SANDBOX",
         secretKey: "913caa5875d02a17c612a8baf7c72b0d",
         appId: "97",
@@ -369,7 +368,7 @@
     let deviceId = ''
     let payCode = document.getElementById("dropdownPayCode").value
     let env = document.getElementById("dropdown").value
-    let appID = CONFIGS[env].appId
+    let appId = CONFIGS[env].appId
     let appToken = CONFIGS[env].appToken
     let publicKey = CONFIGS[env].publicKey
     let privateKey = CONFIGS[env].privateKey
@@ -388,7 +387,7 @@
       configColor: ["#4430b3", "#6756d6"],
       publicKey: publicKey,
       privateKey: privateKey,
-      appId: appID
+      appId: appId
     }
 
     async function getFingerPrint() {
@@ -406,6 +405,8 @@
             ...configs,
             deviceId: visitorId
           }
+
+          console.log('===configs', configs)
           view = new PaymeWebSdk({
             id: 'paymeId',
             configs
@@ -481,7 +482,7 @@
     }
 
     function handleChangeEnv(env) {
-      appID = CONFIGS[env].appId
+      appId = CONFIGS[env].appId
       appToken = CONFIGS[env].appToken
       publicKey = CONFIGS[env].publicKey
       privateKey = CONFIGS[env].privateKey
@@ -490,7 +491,7 @@
       configs = {
         ...configs,
         env,
-        appId: appID,
+        appId: appId,
         publicKey,
         privateKey,
         appToken,
@@ -514,7 +515,7 @@
     }
 
     // function handleRestoreDefault() {
-    //   appID = CONFIGS[env].appId
+    //   appId = CONFIGS[env].appId
     //   appToken = CONFIGS[env].appToken
     //   publicKey = CONFIGS[env].publicKey
     //   privateKey = CONFIGS[env].privateKey
