@@ -682,7 +682,7 @@ class PaymeWebSdk {
       case this.ENV.dev:
         return "https://dev-sdk.payme.com.vn";
       case this.ENV.sandbox:
-        return "https://sbx-sdk.payme.com.vn";
+        return "http://192.168.2.19:3003";
       case this.ENV.production:
         return "https://sdk.payme.com.vn";
       default:
