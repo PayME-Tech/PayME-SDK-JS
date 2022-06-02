@@ -349,6 +349,12 @@ class PaymeWebSdk {
         document.getElementById(this.id).innerHTML = "";
         this.onCloseIframe();
       }
+      if (e.data?.type === 'onDownload') {
+        const a = document.createElement("a"); //Create <a>
+        a.href = e?.data?.data?.url; //Image Base64 Goes here
+        a.download = "VietQR.png"; //File name Here
+        a.click(); //Downloaded file
+      }
       if (e.data?.type === "error") {
         if (e.data?.code === this.ERROR_CODE.EXPIRED) {
           this.onCloseIframe();
@@ -682,7 +688,7 @@ class PaymeWebSdk {
       case this.ENV.dev:
         return "https://dev-sdk.payme.com.vn";
       case this.ENV.sandbox:
-        return "http://192.168.2.19:3003";
+        return "https://sbx-sdk.payme.com.vn";
       case this.ENV.production:
         return "https://sdk.payme.com.vn";
       default:
