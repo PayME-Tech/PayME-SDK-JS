@@ -340,6 +340,9 @@ class PaymeWebSdk {
           this.configs = newConfigs;
           this.isLogin = true;
         }
+        this.sendRespone({
+          accountStatus: e.data.data?.accountStatus
+        });
       }
       if (e.data?.type === this.WALLET_ACTIONS.GET_WALLET_INFO) {
         this.onCloseIframe();

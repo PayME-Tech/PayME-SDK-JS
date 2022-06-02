@@ -18,7 +18,7 @@ Place the following `<scripts>` tag near the bottom of your pages, just before t
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.5/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.6/payme-sdk.min.js"></script>
 ```
    
 ## Usage
