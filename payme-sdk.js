@@ -1378,8 +1378,8 @@ class PaymeWebSdk {
             if (responseAccountInit.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
               onError({
                 code: this.ERROR_CODE.EXPIRED,
-                message: responseAccountInit.response[0]?.extensions?.message ??
-                  'Thông tin  xác thực không hợp lệ',
+                message: responseAccountInit.response[0]?.message ??
+                  'Thông tin xác thực không hợp lệ',
               });
             } else {
               onError({
@@ -1399,8 +1399,8 @@ class PaymeWebSdk {
         if (responseClientRegister.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseClientRegister.response[0]?.extensions?.message ??
-              'Thông tin  xác thực không hợp lệ',
+            message: responseClientRegister.response[0]?.message ??
+              'Thông tin xác thực không hợp lệ',
           });
         } else {
           onError({
@@ -1680,8 +1680,8 @@ class PaymeWebSdk {
       if (responseGetMerchantInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
         onError({
           code: this.ERROR_CODE.EXPIRED,
-          message: responseGetMerchantInfo.response[0]?.extensions?.message ??
-            'Thông tin  xác thực không hợp lệ',
+          message: responseGetMerchantInfo.response[0]?.message ??
+            'Thông tin xác thực không hợp lệ',
         });
       } else {
         onError({
@@ -1822,7 +1822,7 @@ class PaymeWebSdk {
             onError({
               code: this.ERROR_CODE.EXPIRED,
               message:
-                responseQRString.response[0]?.extensions?.message ??
+                responseQRString.response[0]?.message ??
                 'Thông tin xác thực không hợp lệ'
             })
           } else {
@@ -1847,7 +1847,7 @@ class PaymeWebSdk {
         onError({
           code: this.ERROR_CODE.EXPIRED,
           message:
-            responseClientRegister.response[0]?.extensions?.message ??
+            responseClientRegister.response[0]?.message ??
             'Thông tin xác thực không hợp lệ'
         })
       } else {
@@ -1893,7 +1893,7 @@ class PaymeWebSdk {
         if (responseGetWalletInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseGetWalletInfo.response[0]?.extensions?.message ??
+            message: responseGetWalletInfo.response[0]?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -1956,7 +1956,7 @@ class PaymeWebSdk {
         ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseGetSettingServiceMain.response[0]?.extensions?.message ??
+            message: responseGetSettingServiceMain.response[0]?.message ??
               'Thông tin  xác thực không hợp lệ',
           });
         } else {
@@ -2076,8 +2076,8 @@ class PaymeWebSdk {
         if (responseFindAccount.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseFindAccount.response[0]?.extensions?.message ??
-              'Thông tin  xác thực không hợp lệ',
+            message: responseFindAccount.response[0]?.message ??
+              'Thông tin xác thực không hợp lệ',
           });
         } else {
           onError({

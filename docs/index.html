@@ -239,6 +239,7 @@
         <select id="dropdown" onchange="onSelect(this)">
           <option value='dev'>dev</option>
           <option value='sandbox' selected>sandbox</option>
+          <option value='production' selected>production</option>
         </select>
         <!-- <img id='settings' style="width: 32px;height: 32px;margin-left: 8px;visibility: visible;"
           onclick="onChangeSetting(this)" src="http://simpleicon.com/wp-content/uploads/setting2-64x64.png" alt="" />
@@ -301,7 +302,7 @@
 
   <!-- custom id -->
   <div id="paymeId"></div>
-  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.6/payme-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.7/payme-sdk.min.js"></script>
   <!-- <script src="../payme-sdk.js"></script> -->
   <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
   <script async src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
@@ -324,24 +325,23 @@
     const CONFIGS = {
       sandbox: {
         appToken:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6OTcsImlhdCI6MTY1MjE2OTk0N30.fWs8hd1jg-2Jmzfv2Lja9tX7gpHxGyqPzQ5pmJXXWbE",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6OTUsImlhdCI6MTY1MTczMjM0Nn0.TFsg9wizgtWa7EbGzrjC2Gn55TScsJzKGjfeN78bhlg",
         publicKey: `-----BEGIN PUBLIC KEY-----
-MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIO2n60FOa0z1tGOJDJSUk/8VqPK/6Pn
-JcJxuNnIhqUKHQuk8HEtpaAXnulcBQS6ddfMuhWG+Vl7+0O1qXKslYUCAwEAAQ==
------END PUBLIC KEY-----`,
+    MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAId28RoBckMTTPqVCC3c1f+fH+BbdVvv
+    wDkSf+0zmaUlCFyQpassU3+8CvM6QbeYSYGWp1YIwGqg2wTF94zT4eECAwEAAQ==
+    -----END PUBLIC KEY-----`,
         privateKey: `-----BEGIN RSA PRIVATE KEY-----
-MIIBOwIBAAJBAJqkCtkbTurkP9r7fhjsIZ0Fb8I8cyeqA1EoPGLIQXIVO5C0Gx5I
-zcMOZHb5s/o2sFYrEUWoY9Tc8iEdfULlyQkCAwEAAQJBAI0CaKHwNNYbq96S1TkE
-mOIFwxLq7FaOwNeQSQAKeyL6rilXnGfJS8XVBcHtG5W/mvEsBYgBXZo1ugqDfE+x
-qwECIQDRrq7h88IOUDrDurrvMxQHRO8hqifc+nJdFCr6225ZNQIhALzM0QoDOmDM
-IciHHSAy+IE95JYTa0FNnoSZiP7t4j8FAiBuVHAIzG4rgeOp4bNC8al0Ob1qBVJ8
-X/uVJmuHG7bwkQIgM1m9zWxdV3COC718FYLnhjdwUcVMWcGjyMr9sODAtYUCIQDK
-z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
------END RSA PRIVATE KEY-----`,
+    MIIBOwIBAAJBAMEKxNcErAKSzmWcps6HVScLctpdDkBiygA3Pif9rk8BoSU0BYAs
+    G5pW8yRmhCwVMRQq+VhJNZq+MejueSBICz8CAwEAAQJBALfa29K1/mWNEMqyQiSd
+    vDotqzvSOQqVjDJcavSHpgZTrQM+YzWwMKAHXLABYCY4K0t01AjXPPMYBueJtFeA
+    i3ECIQDpb6Fp0yGgulR9LHVcrmEQ4ZTADLEASg+0bxVjv9vkWwIhANOzlw9zDMRr
+    i/5bwttz/YBgY/nMj7YIEy/v4htmllntAiA5jLDRoyCOPIGp3nUMpVz+yW5froFQ
+    nfGjPSOb1OgEMwIhAI4FhyvoJQKIm8wyRxDuSXycLbXhU+/sjuKz7V4wfmEpAiBb
+    PmELTX6BquyCs9jUzoPxDWKQSQGvVUwcWXtpnYxSvQ==
+    -----END RSA PRIVATE KEY-----`,
         env: "SANDBOX",
-        secretKey: "913caa5875d02a17c612a8baf7c72b0d",
-        appId: "97",
-        // storeId: 24088141
+        secretKey: "b5d8cf6c30d9cb4a861036bdde44c137",
+        appId: "95",
       },
       dev: {
         appToken:
@@ -363,6 +363,27 @@ z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
         secretKey: "34cfcd29432cdd5feaecb87519046e2d",
         appId: "12",
         storeId: 9
+      },
+      production: {
+        appToken:
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6NDQsImlhdCI6MTY1MjIzMjEwM30.IMhz9dBDKJ736hTaxGaMJhJvQiq7Q1axsm6TiydspAU",
+        publicKey: `-----BEGIN PUBLIC KEY-----
+    MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKRWwS+plGNWsiQiAMUJgBe7wdjhbAbx
+    ZDBqKnAH9hZlRjrdgglBERzy/80/nL8cTI2FWAhEDaR3CewO+nRbaPECAwEAAQ==
+    -----END PUBLIC KEY-----`,
+        privateKey: `-----BEGIN RSA PRIVATE KEY-----
+    MIIBOgIBAAJBAI8rsaSa1cOzIDX/XsniS8TeZ9c1Kg0wqH4pIjUfL3z5X6lXDA3G
+    g3uj/sdOJews6zDoXXxTHPkocPGdja98rb8CAwEAAQJAWRQOiyPrLMAeonopN+Mc
+    0Xivky744wwLSbO+HN8yZMazvdvVCGjuXRXf9C2Et3sP5mcz1MlO2Zmq2xi0Lgc7
+    QQIhANh5Z888Pv7dWr+s9o7SHoyeSAuO6NCUA0r2aaxNd+cDAiEAqU/hdSUeGicG
+    HQl7chq14DImAbEplcGoT0l7Z/7aE5UCIQC7Z18XaXCf88G8bmCFBCKuWdjFKNMk
+    vv6axvh00hwbQQIgcIPFMDQabQbB6UoD3zAg7XxmBXnWSM8JKqeKevHBuoECIG3A
+    deJhhdalcQyJMTFIzx3r3+ANrkrd1v7VMsdFfaQ0
+    -----END RSA PRIVATE KEY-----`,
+        env: "PRODUCTION",
+        secretKey: "0418d21948d904fb6f423998fd1e4714",
+        appId: "44",
+        // storeId: 9
       },
     }
 
@@ -388,7 +409,7 @@ z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
       configColor: ["#4430b3", "#6756d6"],
       publicKey: publicKey,
       privateKey: privateKey,
-      appId: appId
+      appId: appId,
     }
 
     async function getFingerPrint() {
@@ -563,6 +584,7 @@ z8zZCHekYuIoPZvfhsSym7/dpu3ZNMv986pc62eBoQ==
       showLoading()
       try {
         const connectToken = encrypt(JSON.stringify({ userId, phone: phoneNumber, timestamp: Date.now() }), secretKey)
+        // const connectToken = "HY0j4w3oVBN5OegtkLPhRPpSI4fnZEbGZWFvAd22Ec0f5rvSiXHqy8OyKEJ5ZHnt3nbZzxV14iGJiu1EJCxBoegbDdCiAUynDJrkqs8Kj2gj2yaA/cCU78IZx/MKpjuMweq4GZB+Y9WjTVRkx85WbzbyEfDaxZX95CllGaKMGAsyocOwyuzVXjWMXOOai+wXJYQK454f8X/6UMqddpoe/bvEdxIxinyq7GKq3hGpMIU5aEVbrNbt68doxmgg8gjZGWS5OtyFKgog73OJMVEh+WjqxcnFPb//flCLnFtsTCtZ9MKV1EdD60bZLe6FMGTSuhfDorfyh1CjZtViaBIBfsdEimJGk0gZ2aVycl61WV8dTTle0Xcr7wau9RnDuRnMoLdxrULra5GBjU8py1zHWu0L9qEkwVfZyF0xhpfzq6bgoXFDpCiDfwdI25wauhe6EnL26zhuB6+2vwPSyYO8d+Ks97dCHgTbt32Ea5zTeSwJbuybuNnXeJClHrwDVH+vevn5+qrlfnROcuNQFQZz+lEb4GHPdbpfLcJwoDAH4jGEBqmbEZVG3QJi1UZeLnn9sq3SwonMCljUayOcOYqPUs4w1ohv89ISSaSlCJ29XyArgNw6oOqrR/NnjPyN0ASzQmdgLppubhIURmtxZgFAiPfiW6HsGbOlR+SECpOS6ZiODxViSWoOospm2+cHyFIZBN6G3e3ryblpDaRTCJ7qWehjKIySFl78YsyUl2KpNNqz+sODnkTZaM8QA/4x8YB9f+iTnF4donNTf7fPl+M2RX097Z06NAz6J6DE0Wlokas0E8Ua8rqnsnGrxisCo1iTj5ncbpSG+RAxrHFuFp+ymlr3l/piSX0J1Mep5z1TxXQSihxtHeQDMW5nk8loQLHy+yhRvI1CVrtv8MvILMZ8+xELjwN001BGbxLEFXj6xZJ6JdAOXHOmhEToU/isGOSNJgtUKoIXT8RKqGA7McLWPw=="
         const configsLogin = {
           ...configs,
           connectToken,
