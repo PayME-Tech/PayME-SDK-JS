@@ -18,14 +18,14 @@ PayME SDK là bộ thư viện để các app có thể tương tác với PayME
 
 ## Demo
 
-Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/WebSDKIntegration/)
+Có thể xem demo hoạt động [tại đây](https://payme-tech.github.io/PayME-SDK-JS/)
 
 ## Cài đặt
 Đặt thẻ `<scripts>`  sau đây gần cuối các trang của bạn, ngay trước thẻ đóng `</body>`, để kích hoạt SDK.
 
 **CDN via jsDelivr**
 ```javascript
-<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/WebSDKIntegration@8.7/payme-sdk.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/PayME-Tech/PayME-SDK-JS@8.8/payme-sdk.min.js"></script>
 ```
    
 ## Usage

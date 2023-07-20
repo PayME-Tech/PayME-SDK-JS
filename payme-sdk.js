@@ -1,11 +1,11 @@
 class MeAPI {
   constructor(
     config = {
-      'url': '',
-      'publicKey': '',
-      'privateKey': '',
-      'isSecurity': false,
-      'x-api-client': '',
+      url: "",
+      publicKey: "",
+      privateKey: "",
+      isSecurity: false,
+      "x-api-client": "",
     }
   ) {
     this.config = config;
@@ -25,17 +25,21 @@ class MeAPI {
   merge(object, source) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
-    ).then(() => {
-      return _.merge(object, source)
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        return _.merge(object, source);
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   values(object) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
-    ).then(() => {
-      return _.values(object)
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        return _.values(object);
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   decryptKey(
@@ -48,129 +52,138 @@ class MeAPI {
   ) {
     return this.loadScript(
       "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
-    ).then(async () => {
-      let decryptKey;
-      try {
-        const key = forge.pki.privateKeyFromPem(this.config.privateKey);
-        const {
-          util
-        } = forge;
+    )
+      .then(async () => {
+        let decryptKey;
+        try {
+          const key = forge.pki.privateKeyFromPem(this.config.privateKey);
+          const { util } = forge;
 
-        const encrypted = util.decode64(xAPIKey);
+          const encrypted = util.decode64(xAPIKey);
 
-        decryptKey = key.decrypt(encrypted, 'RSA-OAEP');
+          decryptKey = key.decrypt(encrypted, "RSA-OAEP");
+        } catch (error) {
+          throw new Error('Thông tin "x-api-key" không chính xác');
+        }
+        const objValidate = {
+          "x-api-action": xAPIAction,
+          method,
+          accessToken,
+          "x-api-message": xAPIMessage,
+        };
 
-      } catch (error) {
-        throw new Error('Thông tin "x-api-key" không chính xác');
-      }
-      const objValidate = {
-        'x-api-action': xAPIAction,
-        method,
-        accessToken,
-        'x-api-message': xAPIMessage,
-      };
+        const md = forge.md.md5.create();
+        const objValidateValue = await this.values(objValidate);
+        md.update(objValidateValue.join("") + decryptKey);
+        const validate = md.digest().toHex();
 
-      const md = forge.md.md5.create();
-      const objValidateValue = await this.values(objValidate)
-      md.update(objValidateValue.join('') + decryptKey);
-      const validate = md.digest().toHex();
+        if (validate !== xAPIValidate) {
+          throw new Error('Thông tin "x-api-validate" không chính xác');
+        }
 
-      if (validate !== xAPIValidate) {
-        throw new Error('Thông tin "x-api-validate" không chính xác');
-      }
-
-      return decryptKey
-    }).catch((err) => console.error("Something went wrong.", err))
+        return decryptKey;
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   parseDecryptKey(xAPIMessage, decryptKey) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
-    ).then(() => {
-      // eslint-disable-next-line no-undef
-      try {
-        let result = null;
-        result = JSON.parse(
-          CryptoJS.AES.decrypt(xAPIMessage, decryptKey).toString(
-            CryptoJS.enc.Utf8
-          )
-        );
-        if (typeof result === 'string') {
-          result = JSON.parse(result);
-        }
+    )
+      .then(() => {
+        // eslint-disable-next-line no-undef
+        try {
+          let result = null;
+          result = JSON.parse(
+            CryptoJS.AES.decrypt(xAPIMessage, decryptKey).toString(
+              CryptoJS.enc.Utf8
+            )
+          );
+          if (typeof result === "string") {
+            result = JSON.parse(result);
+          }
 
-        return result
-      } catch (error) {
-        throw new Error('Thông tin "x-api-message" không chính xác');
-      }
-    }).catch((err) => console.error("Something went wrong.", err));
+          return result;
+        } catch (error) {
+          throw new Error('Thông tin "x-api-message" không chính xác');
+        }
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   createShortId() {
     return this.loadScript(
       "https://unpkg.com/shortid-dist@1.0.5/dist/shortid-2.2.13.js"
-    ).then(() => {
-      return shortid();
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        return shortid();
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   AESEncrypt(url, payload, encryptKey) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
-    ).then(() => {
-      const xApiAction = CryptoJS.AES.encrypt(url, encryptKey).toString();
-      let xApiMessage = '';
-      if (payload) {
-        xApiMessage = CryptoJS.AES.encrypt(
-          JSON.stringify(payload),
-          encryptKey
-        ).toString();
-      }
+    )
+      .then(() => {
+        const xApiAction = CryptoJS.AES.encrypt(url, encryptKey).toString();
+        let xApiMessage = "";
+        if (payload) {
+          xApiMessage = CryptoJS.AES.encrypt(
+            JSON.stringify(payload),
+            encryptKey
+          ).toString();
+        }
 
-      return {
-        xApiAction,
-        xApiMessage
-      };
-    }).catch((err) => console.error("Something went wrong.", err))
+        return {
+          xApiAction,
+          xApiMessage,
+        };
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   createXApiValidate(objValidate, encryptKey) {
     return this.loadScript(
       "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
-    ).then(async () => {
-      const md = forge.md.md5.create();
-      const objValidateValue = await this.values(objValidate)
-      md.update(objValidateValue.join('') + encryptKey);
-      const xAPIValidate = md.digest().toHex();
-      return xAPIValidate;
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(async () => {
+        const md = forge.md.md5.create();
+        const objValidateValue = await this.values(objValidate);
+        md.update(objValidateValue.join("") + encryptKey);
+        const xAPIValidate = md.digest().toHex();
+        return xAPIValidate;
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   createXApiKey(encryptKey) {
     return this.loadScript(
       "https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"
-    ).then(() => {
-      const key = forge.pki.publicKeyFromPem(this.config.publicKey);
-      const {
-        util
-      } = forge;
-      const encrypt = key.encrypt(encryptKey, 'RSA-OAEP');
-      const xAPIKey = util.encode64(encrypt);
-      return xAPIKey;
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        const key = forge.pki.publicKeyFromPem(this.config.publicKey);
+        const { util } = forge;
+        const encrypt = key.encrypt(encryptKey, "RSA-OAEP");
+        const xAPIKey = util.encode64(encrypt);
+        return xAPIKey;
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   async postRequest(url, body, header) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
-    ).then(async () => {
-      try {
-        const request = await axios.post(url, body, header);
-        return request;
-      } catch (error) {
-        console.log(error)
-      }
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(async () => {
+        try {
+          const request = await axios.post(url, body, header);
+          return request;
+        } catch (error) {
+          console.log(error);
+        }
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   async ResponseDecrypt(
@@ -182,40 +195,48 @@ class MeAPI {
     xAPIValidate,
     accessToken
   ) {
-    const decryptKey = await this.decryptKey(xAPIAction, xAPIKey, xAPIMessage, xAPIValidate, method, accessToken);
+    const decryptKey = await this.decryptKey(
+      xAPIAction,
+      xAPIKey,
+      xAPIMessage,
+      xAPIValidate,
+      method,
+      accessToken
+    );
 
-    const result = await this.parseDecryptKey(xAPIMessage, decryptKey)
+    const result = await this.parseDecryptKey(xAPIMessage, decryptKey);
     return result;
   }
 
   async RequestEncrypt(url, method, payload, accessToken) {
     const encryptKey = await this.createShortId();
     const xAPIKey = await this.createXApiKey(encryptKey);
-    let body = '';
+    let body = "";
 
-    const {
-      xApiAction,
-      xApiMessage
-    } = await this.AESEncrypt(url, payload, encryptKey);
+    const { xApiAction, xApiMessage } = await this.AESEncrypt(
+      url,
+      payload,
+      encryptKey
+    );
 
     const objValidate = {
       xApiAction,
       method,
       accessToken,
-      'x-api-message': xApiMessage,
+      "x-api-message": xApiMessage,
     };
     const xAPIValidate = await this.createXApiValidate(objValidate, encryptKey);
 
     body = {
-      'x-api-message': xApiMessage,
+      "x-api-message": xApiMessage,
     };
     const meAPIHeader = {
-      'x-api-client': this.config['x-api-client'],
-      'x-api-key': xAPIKey,
-      'x-api-action': xApiAction,
-      'x-api-validate': xAPIValidate,
+      "x-api-client": this.config["x-api-client"],
+      "x-api-key": xAPIKey,
+      "x-api-action": xApiAction,
+      "x-api-validate": xAPIValidate,
     };
-    if (accessToken !== '') {
+    if (accessToken !== "") {
       meAPIHeader.Authorization = accessToken;
     }
     return {
@@ -224,13 +245,13 @@ class MeAPI {
     };
   }
 
-  async Post(pathUrl, payload, accessToken = '', headers = {}) {
+  async Post(pathUrl, payload, accessToken = "", headers = {}) {
     try {
       if (!accessToken) {
-        accessToken = '';
+        accessToken = "";
       }
       let meAPIHeader = {};
-      if (accessToken !== '') {
+      if (accessToken !== "") {
         meAPIHeader.Authorization = accessToken;
       }
       let body = payload;
@@ -240,7 +261,7 @@ class MeAPI {
         url = this.config.url;
         const encrypt = await this.RequestEncrypt(
           pathUrl,
-          'POST',
+          "POST",
           payload,
           accessToken
         );
@@ -251,19 +272,19 @@ class MeAPI {
       const response = await this.postRequest(url, body, {
         headers: await this.merge(meAPIHeader, headers),
         timeout: 60000,
-      })
+      });
 
       if (response.status === 200) {
         if (this.config.isSecurity === true) {
           try {
             const responseHeaders = response.headers;
             const data = await this.ResponseDecrypt(
-              responseHeaders['x-api-action'],
-              'POST',
-              responseHeaders['x-api-client'],
-              responseHeaders['x-api-key'],
-              response.data['x-api-message'],
-              responseHeaders['x-api-validate'],
+              responseHeaders["x-api-action"],
+              "POST",
+              responseHeaders["x-api-client"],
+              responseHeaders["x-api-key"],
+              response.data["x-api-message"],
+              responseHeaders["x-api-validate"],
               accessToken
             );
             return {
@@ -275,7 +296,7 @@ class MeAPI {
             return {
               code: -3,
               data: {
-                message: error.message
+                message: error.message,
               },
               original: response.data,
             };
@@ -296,15 +317,16 @@ class MeAPI {
       return {
         code: -2,
         data: {
-          errors: [{
-            message: error.message
-          }],
+          errors: [
+            {
+              message: error.message,
+            },
+          ],
         },
       };
     }
   }
 }
-
 
 class PaymeWebSdk {
   constructor(settings) {
@@ -341,7 +363,7 @@ class PaymeWebSdk {
           this.isLogin = true;
         }
         this.sendRespone({
-          accountStatus: e.data.data?.accountStatus
+          accountStatus: e.data.data?.accountStatus,
         });
       }
       if (e.data?.type === this.WALLET_ACTIONS.GET_WALLET_INFO) {
@@ -352,7 +374,7 @@ class PaymeWebSdk {
         document.getElementById(this.id).innerHTML = "";
         this.onCloseIframe();
       }
-      if (e.data?.type === 'onDownload') {
+      if (e.data?.type === "onDownload") {
         const a = document.createElement("a"); //Create <a>
         a.href = e?.data?.data?.url; //Image Base64 Goes here
         a.download = "VietQR.png"; //File name Here
@@ -390,16 +412,20 @@ class PaymeWebSdk {
         this.sendRespone(e.data);
       }
       if (e.data?.type === this.WALLET_ACTIONS.OPEN_SERVICE) {
-        this.sendRespone(e.data)
+        this.sendRespone(e.data);
       }
       if (e.data?.type === this.WALLET_ACTIONS.GET_LIST_PAYMENT_METHOD) {
         this.onCloseIframe();
         this.sendRespone(e.data);
       }
-      if (e.data?.type === "onDeposit" || e.data?.type === "onWithDraw" || e.data?.type === "onTransfer") {
+      if (
+        e.data?.type === "onDeposit" ||
+        e.data?.type === "onWithDraw" ||
+        e.data?.type === "onTransfer"
+      ) {
         this.onCloseIframe();
         const res = {
-          ...e.data
+          ...e.data,
         };
         if (e.data?.data?.status === "FAILED") {
           res.error = e.data?.data;
@@ -423,45 +449,45 @@ class PaymeWebSdk {
     NOT_LOGIN: -9,
     // CLOSE_IFRAME: -10,
     BALANCE_ERROR: -11,
-    UNKNOWN_PAYCODE: -12
+    UNKNOWN_PAYCODE: -12,
   };
 
   PAY_CODE = {
-    PAYME: 'PAYME',
-    ATM: 'ATM',
-    CREDIT: 'CREDIT',
-    MANUAL_BANK: 'MANUAL_BANK',
-    MOMO: 'MOMO',
-    ZALO_PAY: 'ZALO_PAY',
-    VIET_QR: 'VIET_QR'
-  }
+    PAYME: "PAYME",
+    ATM: "ATM",
+    CREDIT: "CREDIT",
+    MANUAL_BANK: "MANUAL_BANK",
+    MOMO: "MOMO",
+    ZALO_PAY: "ZALO_PAY",
+    VIET_QR: "VIET_QR",
+  };
 
   ACCOUNT_STATUS = {
-    NOT_ACTIVATED: 'NOT_ACTIVATED',
-    NOT_KYC: 'NOT_KYC',
-    KYC_APPROVED: 'KYC_APPROVED',
-    KYC_REVIEW: 'KYC_REVIEW',
-    KYC_REJECTED: 'KYC_REJECTED'
-  }
+    NOT_ACTIVATED: "NOT_ACTIVATED",
+    NOT_KYC: "NOT_KYC",
+    KYC_APPROVED: "KYC_APPROVED",
+    KYC_REVIEW: "KYC_REVIEW",
+    KYC_REJECTED: "KYC_REJECTED",
+  };
 
   METHOD_TYPE = {
-    PAYME: 'PAYME',
-    PAYME_CREDIT: 'PAYME_CREDIT',
-    WALLET: 'WALLET',
-    BANK_ACCOUNT: 'BANK_ACCOUNT',
-    BANK_CARD: 'BANK_CARD',
-    BANK_CARD_PG: 'BANK_CARD_PG',
-    BANK_TRANSFER: 'BANK_TRANSFER',
-    ATM_CARD: 'ATM_CARD',
-    GATEWAY: 'GATEWAY',
-    CREDIT_CARD: 'CREDIT_CARD',
-    LINKED: 'LINKED',
-    BANK_QR_CODE: 'BANK_QR_CODE',
-    LINKED_BANK: 'LINKED_BANK',
-    LINKED_BANK_PVCBANK: 'LINKED_BANK_PVCBANK',
-    LINKED_BANK_OCBBANK: 'LINKED_BANK_OCBBANK',
-    LINKED_GATEWAY: 'LINKED_GATEWAY'
-  }
+    PAYME: "PAYME",
+    PAYME_CREDIT: "PAYME_CREDIT",
+    WALLET: "WALLET",
+    BANK_ACCOUNT: "BANK_ACCOUNT",
+    BANK_CARD: "BANK_CARD",
+    BANK_CARD_PG: "BANK_CARD_PG",
+    BANK_TRANSFER: "BANK_TRANSFER",
+    ATM_CARD: "ATM_CARD",
+    GATEWAY: "GATEWAY",
+    CREDIT_CARD: "CREDIT_CARD",
+    LINKED: "LINKED",
+    BANK_QR_CODE: "BANK_QR_CODE",
+    LINKED_BANK: "LINKED_BANK",
+    LINKED_BANK_PVCBANK: "LINKED_BANK_PVCBANK",
+    LINKED_BANK_OCBBANK: "LINKED_BANK_OCBBANK",
+    LINKED_GATEWAY: "LINKED_GATEWAY",
+  };
 
   WALLET_ACTIONS = {
     LOGIN: "LOGIN",
@@ -477,7 +503,7 @@ class PaymeWebSdk {
     UTILITY: "UTILITY",
     GET_LIST_PAYMENT_METHOD: "GET_LIST_PAYMENT_METHOD",
     PAY: "PAY",
-    SCAN_QR_CODE: 'SCAN_QR_CODE'
+    SCAN_QR_CODE: "SCAN_QR_CODE",
   };
 
   ENV = {
@@ -489,16 +515,15 @@ class PaymeWebSdk {
   /**
    * Config API
    */
-  API_GENERAL = 'fe.payme.vn';
-  GRAPHQL_DEV = 'https://dev-fe.payme.net.vn';
+  API_GENERAL = "fe.payme.vn";
+  GRAPHQL_DEV = "https://dev-fe.payme.net.vn";
   GRAPHQL_SANBOX = `https://sbx-${this.API_GENERAL}`;
   GRAPHQL_STAGGING = `https://s${this.API_GENERAL}`;
   GRAPHQL_PRODUCTION = `https://${this.API_GENERAL}`;
 
-
   /**
    * query graphql
-   * 
+   *
    */
   SQL_CLIENT_REGISTER = `mutation ClientRegister ($clientRegisterInput: ClientRegisterInput!){
       Client {
@@ -628,7 +653,7 @@ class PaymeWebSdk {
         storeImage
       }
     }
-  }`
+  }`;
 
   SQL_DETECT_QR_CODE = `mutation DetectDataQRCode($input: OpenEWalletPaymentDetectInput!) {
     OpenEWallet {
@@ -646,13 +671,13 @@ class PaymeWebSdk {
         }
       }
     }
-  }`
+  }`;
 
   onCloseIframe() {
     if (this._onError) {
       this._onError({
         code: this.ERROR_CODE.USER_CANCELLED,
-        message: 'Đóng SDK',
+        message: "Đóng SDK",
       });
     }
     this._iframe?.remove();
@@ -701,21 +726,21 @@ class PaymeWebSdk {
 
   getDomainAPI(env) {
     switch (env) {
-      case 'dev':
+      case "dev":
         return this.GRAPHQL_DEV;
-      case 'sandbox':
+      case "sandbox":
         return this.GRAPHQL_SANBOX;
-      case 'staging':
+      case "staging":
         return this.GRAPHQL_STAGGING;
       default:
         return this.GRAPHQL_PRODUCTION;
     }
-  };
+  }
 
   randomString(length) {
-    let result = '';
+    let result = "";
     const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const charactersLength = characters.length;
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -726,65 +751,71 @@ class PaymeWebSdk {
   size(value) {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"
-    ).then(() => {
-      return _.size(value)
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        return _.size(value);
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   randomDayjs() {
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.10.5/dayjs.min.js"
-    ).then(() => {
-      return dayjs().unix();
-    }).catch((err) => console.error("Something went wrong.", err))
+    )
+      .then(() => {
+        return dayjs().unix();
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   getSecure(env) {
     switch (env) {
-      case 'dev':
+      case "dev":
         return false;
-      case 'sandbox':
+      case "sandbox":
         return true;
-      case 'staging':
+      case "staging":
         return true;
-      case 'production':
+      case "production":
         return true;
       default:
         return true;
     }
-  };
+  }
 
   encrypt(text) {
     const secretKey = "CMo359Lqx16QYi3x";
     return this.loadScript(
       "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"
-    ).then(() => {
-      const encrypted = CryptoJS.AES.encrypt(
-        JSON.stringify(text),
-        secretKey
-      ).toString();
+    )
+      .then(() => {
+        const encrypted = CryptoJS.AES.encrypt(
+          JSON.stringify(text),
+          secretKey
+        ).toString();
 
-      return encrypted;
-    }).catch((err) => console.error("Something went wrong.", err))
+        return encrypted;
+      })
+      .catch((err) => console.error("Something went wrong.", err));
   }
 
   async callGraphql(
     sql,
     variables,
     keys = {
-      env: '',
-      publicKey: '',
-      privateKey: '',
-      accessToken: '',
-      appId: '',
+      env: "",
+      publicKey: "",
+      privateKey: "",
+      accessToken: "",
+      appId: "",
     }
   ) {
     const response = await this.callApiRSA({
       env: keys.env?.toLowerCase(),
       domain: this.getDomainAPI(keys.env?.toLowerCase()),
-      method: 'POST',
-      pathUrl: '/graphql',
-      accessToken: keys.accessToken ?? '',
+      method: "POST",
+      pathUrl: "/graphql",
+      accessToken: keys.accessToken ?? "",
       body: {
         query: `${sql}`,
         variables: variables || null,
@@ -792,37 +823,38 @@ class PaymeWebSdk {
       isSecurity: this.getSecure(keys.env?.toLowerCase()),
       publicKey: keys.publicKey,
       privateKey: keys.privateKey,
-      xApi: keys?.appId ?? '',
+      xApi: keys?.appId ?? "",
     });
-    return response
+    return response;
   }
 
   handleResponse = (response) => {
     if (!response.data?.errors) {
       return {
         status: true,
-        response: response?.data?.data ?? {}
+        response: response?.data?.data ?? {},
       };
     } else {
       return {
         status: false,
-        response: response?.data?.errors ?? {}
+        response: response?.data?.errors ?? {},
       };
     }
   };
 
   async clientRegister(params, keys) {
     const clientRegisterInput = {
-      platform: 'web',
+      platform: "web",
       deviceId: params.deviceId,
-      channel: 'channel',
-      version: '1.0.0',
+      channel: "channel",
+      version: "1.0.0",
       isRoot: false,
     };
     const res = await this.callGraphql(
-      this.SQL_CLIENT_REGISTER, {
-      clientRegisterInput,
-    },
+      this.SQL_CLIENT_REGISTER,
+      {
+        clientRegisterInput,
+      },
       keys
     );
     return this.handleResponse(res);
@@ -835,13 +867,14 @@ class PaymeWebSdk {
       clientId: params.clientId,
     };
     const res = await this.callGraphql(
-      this.SQL_INIT_ACCOUNT, {
-      initInput,
-    },
+      this.SQL_INIT_ACCOUNT,
+      {
+        initInput,
+      },
       keys
     );
     return this.handleResponse(res);
-  };
+  }
 
   async getWalletInfoAPI(params, keys) {
     const res = await this.callGraphql(this.SQL_GET_BALANCE, {}, keys);
@@ -851,9 +884,11 @@ class PaymeWebSdk {
   async findAccount(params, keys) {
     const res = await this.callGraphql(
       this.SQL_FIND_ACCOUNT,
-      params.phone ? {
-        accountPhone: params.phone
-      } : {},
+      params.phone
+        ? {
+            accountPhone: params.phone,
+          }
+        : {},
       keys
     );
     return this.handleResponse(res);
@@ -861,9 +896,10 @@ class PaymeWebSdk {
 
   async getSettingServiceMain(params, keys) {
     const res = await this.callGraphql(
-      this.SQL_SETTING, {
-      configsAppId: params?.appId
-    },
+      this.SQL_SETTING,
+      {
+        configsAppId: params?.appId,
+      },
       keys
     );
     return this.handleResponse(res);
@@ -873,12 +909,14 @@ class PaymeWebSdk {
     const res = await this.callGraphql(
       this.SQL_GET_MERCHANT_INFO,
       {
-        getInfoMerchantInput: params?.storeId ? {
-          storeId: params?.storeId,
-          appId: params?.appId
-        } : {
-          appId: params?.appId
-        }
+        getInfoMerchantInput: params?.storeId
+          ? {
+              storeId: params?.storeId,
+              appId: params?.appId,
+            }
+          : {
+              appId: params?.appId,
+            },
       },
       keys
     );
@@ -887,16 +925,17 @@ class PaymeWebSdk {
 
   async getPaymentMethod(params, keys) {
     const PaymentMethodInput = {
-      serviceType: 'OPEN_EWALLET_PAYMENT',
+      serviceType: "OPEN_EWALLET_PAYMENT",
       extraData: {
         storeId: params?.storeId,
       },
-      payCode: params?.payCode
+      payCode: params?.payCode,
     };
     const res = await this.callGraphql(
-      this.SQL_PAYMENT_MEHTOD, {
-      PaymentMethodInput
-    },
+      this.SQL_PAYMENT_MEHTOD,
+      {
+        PaymentMethodInput,
+      },
       keys
     );
     return this.handleResponse(res);
@@ -908,12 +947,12 @@ class PaymeWebSdk {
       {
         input: {
           clientId: params?.clientId,
-          qrContent: params?.qrContent
-        }
+          qrContent: params?.qrContent,
+        },
       },
       keys
-    )
-    return this.handleResponse(res)
+    );
+    return this.handleResponse(res);
   }
 
   async createLoginURL() {
@@ -1009,7 +1048,7 @@ class PaymeWebSdk {
         note: param.note,
         userName: param.userName,
         isShowResultUI: param.isShowResultUI,
-        payCode: param.payCode
+        payCode: param.payCode,
       },
     };
     const encrypt = await this.encrypt(configs);
@@ -1060,7 +1099,7 @@ class PaymeWebSdk {
       ...this.configs,
       actions: {
         type: this.WALLET_ACTIONS.SCAN_QR_CODE,
-        payCode: param?.payCode
+        payCode: param?.payCode,
       },
     };
     const encrypt = await this.encrypt(configs);
@@ -1080,37 +1119,32 @@ class PaymeWebSdk {
     publicKey,
     privateKey,
   }) {
-    if (env !== 'production') {
-      console.log(
-        '[PAYLOAD]',
-        method.toUpperCase(),
-        domain + pathUrl,
-        body,
-      );
+    if (env !== "production") {
+      console.log("[PAYLOAD]", method.toUpperCase(), domain + pathUrl, body);
     }
 
     const meAPI = new MeAPI({
-      'url': domain,
+      url: domain,
       publicKey,
       privateKey,
       isSecurity,
-      'x-api-client': xApi,
+      "x-api-client": xApi,
     });
     const headers = {
-      'x-request-id': `${await this.randomDayjs()}-${this.randomString(32)}`,
+      "x-request-id": `${await this.randomDayjs()}-${this.randomString(32)}`,
     };
     let response;
-    if (method.toUpperCase() === 'POST') {
-      response = await meAPI.Post(pathUrl, body, accessToken || '', headers);
+    if (method.toUpperCase() === "POST") {
+      response = await meAPI.Post(pathUrl, body, accessToken || "", headers);
     }
 
-    if (env !== 'production') {
+    if (env !== "production") {
       console.log(
-        '[REQUEST]',
+        "[REQUEST]",
         method.toUpperCase(),
         domain + pathUrl,
         body,
-        response,
+        response
       );
     }
 
@@ -1120,45 +1154,44 @@ class PaymeWebSdk {
   handleGraphQLResponse(response) {
     if (response?.code === -3) {
       // Không decrypt được data từ SERVER
-      console.log('Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0001');
+      console.log("Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0001");
     } else if (response?.code === 400) {
       // Error khi thông số truyền lên ko chính xác
-      console.log('Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0002');
+      console.log("Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0002");
     } else if (response?.code === -2) {
       // Error chưa tới SERVER
       /* -- */
-      const {
-        errors
-      } = response.data;
+      const { errors } = response.data;
       if (errors && this.size(errors) > 0) {
         const error = errors[0];
-        if (error.message === 'Network Error') {
+        if (error.message === "Network Error") {
           console.log(
-            'Kết nối mạng bị sự cố, vui lòng kiểm tra và thử lại. Xin cảm ơn !'
+            "Kết nối mạng bị sự cố, vui lòng kiểm tra và thử lại. Xin cảm ơn !"
           );
         } else if (
-          error.message === 'timeout of 30000ms exceeded' ||
-          error.message === 'timeout of 60000ms exceeded'
+          error.message === "timeout of 30000ms exceeded" ||
+          error.message === "timeout of 60000ms exceeded"
         ) {
-          console.log('Kết nối đến máy chủ quá lâu, vui lòng kiểm tra lại đường truyền và thử lại. Xin cảm ơn !');
+          console.log(
+            "Kết nối đến máy chủ quá lâu, vui lòng kiểm tra lại đường truyền và thử lại. Xin cảm ơn !"
+          );
         } else {
-          console.log('Có lỗi từ hệ thống. Mã lỗi: SDK-C0003');
+          console.log("Có lỗi từ hệ thống. Mã lỗi: SDK-C0003");
         }
       }
       /* -- */
     } else if (response?.code === 1) {
-      const {
-        errors
-      } = response.data;
+      const { errors } = response.data;
       if (errors && this.size(errors) > 0) {
         const error = errors[0];
         if (error.extensions?.code === this.ERROR_CODE.EXPIRED) {
-          console.log(error.message ?? 'Thông tin xác thực không hợp lệ');
+          console.log(error.message ?? "Thông tin xác thực không hợp lệ");
         } else if (error.extensions?.code === 400) {
-          console.log('Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0002');
+          console.log("Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0002");
         } else {
-          console.log(error.message ?? 'Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0004');
-
+          console.log(
+            error.message ?? "Có lỗi từ máy chủ hệ thống. Mã lỗi: SDK-C0004"
+          );
         }
       }
     }
@@ -1166,22 +1199,19 @@ class PaymeWebSdk {
     return response;
   }
 
-  isOnline(onOnline, onDisconnect) {
-    var xhr = XMLHttpRequest ?
-      new XMLHttpRequest() :
-      new ActiveXObject("Microsoft.XMLHttp");
-    xhr.onload = function () {
-      if (onOnline instanceof Function) {
+  async isOnline(onOnline, onDisconnect) {
+    try {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      if (response.status >= 200 && response.status < 300) {
         onOnline();
-      }
-    };
-    xhr.onerror = function () {
-      if (onDisconnect instanceof Function) {
+      } else {
         onDisconnect();
       }
-    };
-    xhr.open("GET", 'https://httpbin.org/get', true);
-    xhr.send();
+    } catch (error) {
+      onDisconnect();
+    }
   }
 
   openIframe(link) {
@@ -1192,15 +1222,15 @@ class PaymeWebSdk {
 
         ifrm.setAttribute(`src`, link);
         ifrm.setAttribute(
-          `sandbox`,
-          'allow-same-origin allow-scripts allow-popups allow-forms'
-        )
-        ifrm.style.width = this.dimension.width ?
-          `${this.dimension.width}px` :
-          "100%";
-        ifrm.style.height = this.dimension.height ?
-          `${this.dimension.height}px` :
-          "100%";
+          "sandbox",
+          "allow-same-origin allow-scripts allow-popups allow-forms"
+        );
+        ifrm.style.width = this.dimension.width
+          ? `${this.dimension.width}px`
+          : "100%";
+        ifrm.style.height = this.dimension.height
+          ? `${this.dimension.height}px`
+          : "100%";
         ifrm.style.position = "absolute";
         ifrm.style.top = 0;
         ifrm.style.left = 0;
@@ -1218,39 +1248,11 @@ class PaymeWebSdk {
         this.sendRespone({
           error: {
             code: this.ERROR_CODE.NETWORK,
-            message: "Network Error!"
+            message: "Network Error!",
           },
         });
       }
     );
-  }
-
-  hideIframe(link) {
-    this.isOnline(() => {
-      let div = document.createElement("div");
-      let ifrm = document.createElement("iframe");
-      this._iframe = ifrm;
-
-      div.style.visibility = "hidden"; x
-      div.style.display = "block";
-      div.style.width = 0;
-      div.style.height = 0;
-
-      ifrm.setAttribute(`src`, link);
-      ifrm.style.width = 0;
-      ifrm.style.height = 0;
-      ifrm.style.border = 0;
-      const element = document.getElementById(this.id);
-      div.appendChild(ifrm);
-      element && element.appendChild(div);
-    }, () => {
-      this.sendRespone({
-        error: {
-          code: this.ERROR_CODE.NETWORK,
-          message: "Network Error!"
-        },
-      });
-    })
   }
 
   async init(configs, onSuccess, onError) {
@@ -1259,30 +1261,33 @@ class PaymeWebSdk {
         env: configs.env,
         publicKey: configs.publicKey,
         privateKey: configs.privateKey,
-        accessToken: '',
+        accessToken: "",
         appId: configs.appId ?? configs.xApi,
       };
-      const responseClientRegister = await this.clientRegister({
-        deviceId: configs?.clientId ?? configs?.deviceId,
-      },
+      const responseClientRegister = await this.clientRegister(
+        {
+          deviceId: configs?.clientId ?? configs?.deviceId,
+        },
         keys
       );
       if (responseClientRegister.status) {
         if (responseClientRegister.response?.Client?.Register?.succeeded) {
-          const responseAccountInit = await this.accountInit({
-            appToken: configs.appToken,
-            connectToken: configs.connectToken,
-            clientId: responseClientRegister.response?.Client?.Register?.clientId,
-          },
+          const responseAccountInit = await this.accountInit(
+            {
+              appToken: configs.appToken,
+              connectToken: configs.connectToken,
+              clientId:
+                responseClientRegister.response?.Client?.Register?.clientId,
+            },
             keys
           );
           if (responseAccountInit.status) {
             const {
               handShake,
-              accessToken = '',
-              phone = '',
-              storeName = '',
-              storeImage = '',
+              accessToken = "",
+              phone = "",
+              storeName = "",
+              storeImage = "",
               updateToken,
               kyc,
             } = responseAccountInit.response?.OpenEWallet?.Init ?? {};
@@ -1297,26 +1302,24 @@ class PaymeWebSdk {
             //     code: ERROR_CODE.SYSTEM,
             //     message: 'Số điện thoại không khớp với số đã đăng kí!',
             //   });
-            // } else 
-            if (
-              responseAccountInit.response?.OpenEWallet?.Init?.succeeded
-            ) {
+            // } else
+            if (responseAccountInit.response?.OpenEWallet?.Init?.succeeded) {
               if (
                 responseAccountInit.response?.OpenEWallet?.Init?.kyc &&
                 responseAccountInit.response?.OpenEWallet?.Init?.kyc?.kycId
               ) {
                 if (
                   responseAccountInit.response?.OpenEWallet?.Init?.kyc
-                    ?.state === 'APPROVED'
+                    ?.state === "APPROVED"
                 ) {
-                  accountStatus = this.ACCOUNT_STATUS.KYC_APPROVED
+                  accountStatus = this.ACCOUNT_STATUS.KYC_APPROVED;
                 } else if (
                   responseAccountInit.response?.OpenEWallet?.Init?.kyc
-                    ?.state === 'PENDING'
+                    ?.state === "PENDING"
                 ) {
-                  accountStatus = this.ACCOUNT_STATUS.KYC_REVIEW
+                  accountStatus = this.ACCOUNT_STATUS.KYC_REVIEW;
                 } else {
-                  accountStatus = this.ACCOUNT_STATUS.KYC_REJECTED
+                  accountStatus = this.ACCOUNT_STATUS.KYC_REJECTED;
                 }
               } else {
                 accountStatus = this.ACCOUNT_STATUS.NOT_KYC;
@@ -1337,11 +1340,11 @@ class PaymeWebSdk {
                 ...responseLogin.data,
               };
               this.configs = newConfigs;
-              this.domain = this.getDomain(this.configs.env)
+              this.domain = this.getDomain(this.configs.env);
               // this._createUrlWebPaymeSdk = new PaymeWebSdk(newConfigs);
               this.isLogin = true;
               onSuccess({
-                accountStatus: responseLogin.data.accountStatus
+                accountStatus: responseLogin.data.accountStatus,
               });
             } else if (!accessToken && updateToken) {
               const responseLogin = {
@@ -1361,58 +1364,72 @@ class PaymeWebSdk {
                 dataInit: responseAccountInit.response?.OpenEWallet?.Init ?? {},
               };
               this.configs = newConfigs;
-              this.domain = this.getDomain(this.configs.env)
+              this.domain = this.getDomain(this.configs.env);
               // this._createUrlWebPaymeSdk = new PaymeWebSdk(newConfigs);
               this.isLogin = true;
               onSuccess({
-                accountStatus: responseLogin.data.accountStatus
+                accountStatus: responseLogin.data.accountStatus,
               });
             } else {
               onError({
                 code: this.ERROR_CODE.SYSTEM,
-                message: responseAccountInit.response?.OpenEWallet?.Init?.message ??
-                  'Có lỗi từ máy chủ hệ thống',
+                message:
+                  responseAccountInit.response?.OpenEWallet?.Init?.message ??
+                  "Có lỗi từ máy chủ hệ thống",
               });
             }
           } else {
-            if (responseAccountInit.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+            if (
+              responseAccountInit.response[0]?.extensions?.code ===
+              this.ERROR_CODE.EXPIRED
+            ) {
               onError({
                 code: this.ERROR_CODE.EXPIRED,
-                message: responseAccountInit.response[0]?.message ??
-                  'Thông tin xác thực không hợp lệ',
+                message:
+                  responseAccountInit.response[0]?.message ??
+                  "Thông tin xác thực không hợp lệ",
               });
             } else {
               onError({
                 code: this.ERROR_CODE.SYSTEM,
-                message: responseAccountInit?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+                message:
+                  responseAccountInit?.response?.message ??
+                  "Có lỗi từ máy chủ hệ thống",
               });
             }
           }
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: responseClientRegister.response?.Client?.Register?.message ??
-              'Có lỗi từ máy chủ hệ thống',
+            message:
+              responseClientRegister.response?.Client?.Register?.message ??
+              "Có lỗi từ máy chủ hệ thống",
           });
         }
       } else {
-        if (responseClientRegister.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+        if (
+          responseClientRegister.response[0]?.extensions?.code ===
+          this.ERROR_CODE.EXPIRED
+        ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseClientRegister.response[0]?.message ??
-              'Thông tin xác thực không hợp lệ',
+            message:
+              responseClientRegister.response[0]?.message ??
+              "Thông tin xác thực không hợp lệ",
           });
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: responseClientRegister?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+            message:
+              responseClientRegister?.response?.message ??
+              "Có lỗi từ máy chủ hệ thống",
           });
         }
       }
     } catch (error) {
       onError({
         code: this.ERROR_CODE.SYSTEM,
-        message: error.message ?? 'Có lỗi xảy ra',
+        message: error.message ?? "Có lỗi xảy ra",
       });
     }
   }
@@ -1422,13 +1439,13 @@ class PaymeWebSdk {
     this.configs = configs;
 
     if (configs?.connectToken) {
-      this.init(configs, onSuccess, onError)
+      this.init(configs, onSuccess, onError);
     } else {
       onError({
         code: this.ERROR_CODE.SYSTEM,
-        message: 'Thiếu thông tin connectToken',
+        message: "Thiếu thông tin connectToken",
       });
-      this.isLogin = false
+      this.isLogin = false;
     }
   }
 
@@ -1436,7 +1453,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1453,7 +1470,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1470,7 +1487,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1495,7 +1512,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1520,7 +1537,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1545,7 +1562,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1652,52 +1669,71 @@ class PaymeWebSdk {
       appId: this.configs?.xApi ?? this.configs?.appId,
     };
 
-    const responseGetMerchantInfo = await this.getMerchantInfo({
-      storeId: param?.storeId,
-      appId: this.configs?.xApi ?? this.configs?.appId
-    }, keys)
+    const responseGetMerchantInfo = await this.getMerchantInfo(
+      {
+        storeId: param?.storeId,
+        appId: this.configs?.xApi ?? this.configs?.appId,
+      },
+      keys
+    );
 
     if (responseGetMerchantInfo.status) {
-      if (responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.succeeded) {
+      if (
+        responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant
+          ?.succeeded
+      ) {
         const newConfigs = {
           ...this.configs,
           accountStatus: this.ACCOUNT_STATUS.NOT_ACTIVATED,
-          storeName: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.merchantName,
-          storeImage: responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.storeImage
+          storeName:
+            responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant
+              ?.merchantName,
+          storeImage:
+            responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant
+              ?.storeImage,
         };
         this.configs = newConfigs;
-        this.domain = this.getDomain(this.configs.env)
+        this.domain = this.getDomain(this.configs.env);
       } else {
         onError({
           code: this.ERROR_CODE.SYSTEM,
           message:
-            responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant?.message ??
-            'Có lỗi từ máy chủ hệ thống',
+            responseGetMerchantInfo?.response?.OpenEWallet?.GetInfoMerchant
+              ?.message ?? "Có lỗi từ máy chủ hệ thống",
         });
-        return
+        return;
       }
     } else {
-      if (responseGetMerchantInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+      if (
+        responseGetMerchantInfo.response[0]?.extensions?.code ===
+        this.ERROR_CODE.EXPIRED
+      ) {
         onError({
           code: this.ERROR_CODE.EXPIRED,
-          message: responseGetMerchantInfo.response[0]?.message ??
-            'Thông tin xác thực không hợp lệ',
+          message:
+            responseGetMerchantInfo.response[0]?.message ??
+            "Thông tin xác thực không hợp lệ",
         });
       } else {
         onError({
           code: this.ERROR_CODE.SYSTEM,
-          message: responseGetMerchantInfo?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+          message:
+            responseGetMerchantInfo?.response?.message ??
+            "Có lỗi từ máy chủ hệ thống",
         });
       }
-      return
+      return;
     }
 
-    if (param?.payCode && !Object.values(this.PAY_CODE).includes(param?.payCode)) {
+    if (
+      param?.payCode &&
+      !Object.values(this.PAY_CODE).includes(param?.payCode)
+    ) {
       onError({
         code: this.ERROR_CODE.UNKNOWN_PAYCODE,
-        message: 'Giá trị payCode không hợp lệ!'
-      })
-      return
+        message: "Giá trị payCode không hợp lệ!",
+      });
+      return;
     }
 
     const id = this.id;
@@ -1712,7 +1748,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1722,15 +1758,18 @@ class PaymeWebSdk {
       publicKey: this.configs?.publicKey,
       privateKey: this.configs?.privateKey,
       accessToken: this.configs?.accessToken,
-      appId: this.configs?.xApi ?? this.configs?.appId
-    }
+      appId: this.configs?.xApi ?? this.configs?.appId,
+    };
 
-    if (param?.payCode && !Object.values(this.PAY_CODE).includes(param?.payCode)) {
+    if (
+      param?.payCode &&
+      !Object.values(this.PAY_CODE).includes(param?.payCode)
+    ) {
       onError({
         code: this.ERROR_CODE.UNKNOWN_PAYCODE,
-        message: 'Giá trị payCode không hợp lệ!'
-      })
-      return
+        message: "Giá trị payCode không hợp lệ!",
+      });
+      return;
     }
 
     const id = this.id;
@@ -1745,7 +1784,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1755,37 +1794,37 @@ class PaymeWebSdk {
       publicKey: this.configs?.publicKey,
       privateKey: this.configs?.privateKey,
       accessToken: this.configs?.accessToken,
-      appId: this.configs?.xApi ?? this.configs?.appId
-    }
+      appId: this.configs?.xApi ?? this.configs?.appId,
+    };
     const responseClientRegister = await this.clientRegister(
       {
-        deviceId: this.configs?.clientId ?? this.configs?.deviceId
+        deviceId: this.configs?.clientId ?? this.configs?.deviceId,
       },
       keys
-    )
+    );
     if (responseClientRegister.status) {
       if (responseClientRegister.response?.Client?.Register?.succeeded) {
         const response = {
           data: {
             clientId:
-              responseClientRegister.response?.Client?.Register?.clientId
-          }
-        }
+              responseClientRegister.response?.Client?.Register?.clientId,
+          },
+        };
         const newConfigs = {
           ...this.configs,
-          ...response.data
-        }
+          ...response.data,
+        };
         this.configs = newConfigs;
-        this.domain = this.getDomain(this.configs.env)
+        this.domain = this.getDomain(this.configs.env);
 
         const responseQRString = await this.detectQRString(
           {
             clientId:
               responseClientRegister.response?.Client?.Register?.clientId,
-            qrContent: param?.qrContent
+            qrContent: param?.qrContent,
           },
           keys
-        )
+        );
 
         if (responseQRString?.status) {
           if (
@@ -1801,37 +1840,41 @@ class PaymeWebSdk {
               orderId:
                 responseQRString?.response?.OpenEWallet?.Payment?.Detect
                   ?.orderId,
-              note:
-                responseQRString?.response?.OpenEWallet?.Payment?.Detect?.note,
+              note: responseQRString?.response?.OpenEWallet?.Payment?.Detect
+                ?.note,
               userName:
-                responseQRString?.response?.OpenEWallet?.Payment?.Detect?.userName,
+                responseQRString?.response?.OpenEWallet?.Payment?.Detect
+                  ?.userName,
               isShowResultUI: param?.isShowResultUI,
-              payCode: param?.payCode
-            }
-            this.pay(payParam, onSuccess, onError)
+              payCode: param?.payCode,
+            };
+            this.pay(payParam, onSuccess, onError);
           } else {
             onError({
               code: this.ERROR_CODE.SYSTEM,
               message:
                 responseQRString.response?.OpenEWallet?.Payment?.Detect
-                  ?.message ?? 'Có lỗi từ máy chủ hệ thống'
-            })
+                  ?.message ?? "Có lỗi từ máy chủ hệ thống",
+            });
           }
         } else {
-          if (responseQRString.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+          if (
+            responseQRString.response[0]?.extensions?.code ===
+            this.ERROR_CODE.EXPIRED
+          ) {
             onError({
               code: this.ERROR_CODE.EXPIRED,
               message:
                 responseQRString.response[0]?.message ??
-                'Thông tin xác thực không hợp lệ'
-            })
+                "Thông tin xác thực không hợp lệ",
+            });
           } else {
             onError({
               code: this.ERROR_CODE.SYSTEM,
               message:
                 responseQRString?.response?.message ??
-                'Có lỗi từ máy chủ hệ thống'
-            })
+                "Có lỗi từ máy chủ hệ thống",
+            });
           }
         }
       } else {
@@ -1839,24 +1882,27 @@ class PaymeWebSdk {
           code: this.ERROR_CODE.SYSTEM,
           message:
             responseClientRegister.response?.Client?.Register?.message ??
-            'Có lỗi từ máy chủ hệ thống'
-        })
+            "Có lỗi từ máy chủ hệ thống",
+        });
       }
     } else {
-      if (responseClientRegister.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+      if (
+        responseClientRegister.response[0]?.extensions?.code ===
+        this.ERROR_CODE.EXPIRED
+      ) {
         onError({
           code: this.ERROR_CODE.EXPIRED,
           message:
             responseClientRegister.response[0]?.message ??
-            'Thông tin xác thực không hợp lệ'
-        })
+            "Thông tin xác thực không hợp lệ",
+        });
       } else {
         onError({
           code: this.ERROR_CODE.SYSTEM,
           message:
             responseClientRegister?.response?.message ??
-            'Có lỗi từ máy chủ hệ thống'
-        })
+            "Có lỗi từ máy chủ hệ thống",
+        });
       }
     }
   }
@@ -1865,7 +1911,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1890,23 +1936,29 @@ class PaymeWebSdk {
       if (responseGetWalletInfo.status) {
         onSuccess(responseGetWalletInfo.response?.Wallet ?? {});
       } else {
-        if (responseGetWalletInfo.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+        if (
+          responseGetWalletInfo.response[0]?.extensions?.code ===
+          this.ERROR_CODE.EXPIRED
+        ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseGetWalletInfo.response[0]?.message ??
-              'Thông tin  xác thực không hợp lệ',
+            message:
+              responseGetWalletInfo.response[0]?.message ??
+              "Thông tin  xác thực không hợp lệ",
           });
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: responseGetWalletInfo?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+            message:
+              responseGetWalletInfo?.response?.message ??
+              "Có lỗi từ máy chủ hệ thống",
           });
         }
       }
     } catch (error) {
       onError({
         code: this.ERROR_CODE.SYSTEM,
-        message: error.message ?? 'Có lỗi xảy ra',
+        message: error.message ?? "Có lỗi xảy ra",
       });
     }
   }
@@ -1915,7 +1967,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -1944,32 +1996,37 @@ class PaymeWebSdk {
         keys
       );
       if (responseGetSettingServiceMain.status) {
-        const service = responseGetSettingServiceMain.response?.Setting?.configs?.filter(
-          (itemSetting) => itemSetting?.key === 'service.main.visible'
-        );
-        const valueStr = service[0]?.value ?? '';
+        const service =
+          responseGetSettingServiceMain.response?.Setting?.configs?.filter(
+            (itemSetting) => itemSetting?.key === "service.main.visible"
+          );
+        const valueStr = service[0]?.value ?? "";
         const list = valueStr ? JSON.parse(valueStr)?.listService : [];
         onSuccess(list);
       } else {
         if (
-          responseGetSettingServiceMain.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED
+          responseGetSettingServiceMain.response[0]?.extensions?.code ===
+          this.ERROR_CODE.EXPIRED
         ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseGetSettingServiceMain.response[0]?.message ??
-              'Thông tin  xác thực không hợp lệ',
+            message:
+              responseGetSettingServiceMain.response[0]?.message ??
+              "Thông tin  xác thực không hợp lệ",
           });
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: responseGetSettingServiceMain?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+            message:
+              responseGetSettingServiceMain?.response?.message ??
+              "Có lỗi từ máy chủ hệ thống",
           });
         }
       }
     } catch (error) {
       onError({
         code: this.ERROR_CODE.SYSTEM,
-        message: error.message ?? 'Có lỗi xảy ra',
+        message: error.message ?? "Có lỗi xảy ra",
       });
     }
   }
@@ -2045,7 +2102,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -2073,23 +2130,29 @@ class PaymeWebSdk {
       if (responseFindAccount.status) {
         onSuccess(responseFindAccount.response?.Account ?? {});
       } else {
-        if (responseFindAccount.response[0]?.extensions?.code === this.ERROR_CODE.EXPIRED) {
+        if (
+          responseFindAccount.response[0]?.extensions?.code ===
+          this.ERROR_CODE.EXPIRED
+        ) {
           onError({
             code: this.ERROR_CODE.EXPIRED,
-            message: responseFindAccount.response[0]?.message ??
-              'Thông tin xác thực không hợp lệ',
+            message:
+              responseFindAccount.response[0]?.message ??
+              "Thông tin xác thực không hợp lệ",
           });
         } else {
           onError({
             code: this.ERROR_CODE.SYSTEM,
-            message: responseFindAccount?.response?.message ?? 'Có lỗi từ máy chủ hệ thống',
+            message:
+              responseFindAccount?.response?.message ??
+              "Có lỗi từ máy chủ hệ thống",
           });
         }
       }
     } catch (error) {
       onError({
         code: this.ERROR_CODE.SYSTEM,
-        message: error.message ?? 'Có lỗi xảy ra',
+        message: error.message ?? "Có lỗi xảy ra",
       });
     }
   }
@@ -2098,7 +2161,7 @@ class PaymeWebSdk {
     if (!this.isLogin) {
       onError({
         code: this.ERROR_CODE.NOT_LOGIN,
-        message: "NOT LOGIN"
+        message: "NOT LOGIN",
       });
       return;
     }
@@ -2111,9 +2174,9 @@ class PaymeWebSdk {
       return;
     }
 
-    const id = this.id
-    const iframe = await this.createOpenServiceURL(serviceCode)
-    this.openIframe(iframe)
+    const id = this.id;
+    const iframe = await this.createOpenServiceURL(serviceCode);
+    this.openIframe(iframe);
 
     this._onSuccess = onSuccess;
     this._onError = onError;
